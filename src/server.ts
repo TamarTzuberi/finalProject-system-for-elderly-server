@@ -10,7 +10,8 @@ import * as User from './DButils/user'
 import * as Volunteer from './DButils/volunteer'
 import { Gender } from "./types/gender";
 import admin from './routers/admin';
-
+import band from './routers/band';
+import bodyParser from "body-parser";
 
  
  dotenv.config();
@@ -29,8 +30,11 @@ import admin from './routers/admin';
  */
  app.use(helmet());
  app.use(cors());
- app.use(express.json());
+ app.use(bodyParser.urlencoded({extended:true}));
+ app.use(bodyParser.json());
+//  app.use(express.json());
  app.use("/admin", admin);
+ app.use("/",band);
 /**
  * Server Activation
  */
