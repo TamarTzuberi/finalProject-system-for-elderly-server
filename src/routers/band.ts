@@ -86,6 +86,7 @@ router.get("/steps", async (req,res) => {
             for( const points of dataSet.dataset){
                 for( const steps of points.point){
                     console.log(steps.value);
+                    res.status(200).send(steps.value);
                 }
             }
         }
