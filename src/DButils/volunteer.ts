@@ -44,7 +44,7 @@ export const getVolunteerDetails = async (username:string) => {
 	}
 }
 
-export const insertVolunteer = async (username:string, firstName:string, lastName:string, birthYear: number, city:string, email:string,  gender:Gender, areasOfInterest:string[], languages:string[], services:string[], preferredDaysAndHours:string[], digitalDevices:string[], phoneNumber:string, additionalInformation:string) => {
+export const insertVolunteer = async (username:string, firstName:string, lastName:string, birthYear: number, city:string, email:string,  gender:Gender, areasOfInterest:string[], languages:string[], services:string[], digitalDevices:string[], phoneNumber:string, additionalInformation:string) => {
 	const client = new MongoClient(config.database.url);
 	try{
 		await client.connect()
@@ -64,7 +64,6 @@ export const insertVolunteer = async (username:string, firstName:string, lastNam
                 areasOfInterest,
                 languages,
                 services,
-                preferredDaysAndHours,
                 digitalDevices,
                 phoneNumber,
                 additionalInformation			

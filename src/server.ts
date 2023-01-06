@@ -11,7 +11,11 @@ import * as Volunteer from './DButils/volunteer'
 import { Gender } from "./types/gender";
 import admin from './routers/admin';
 import band from './routers/band';
+import researcher from './routers/researcher';
+
 import bodyParser from "body-parser";
+import * as Elderly from './DButils/elderly';
+import * as Band from './DButils/band';
 
  
  dotenv.config();
@@ -35,11 +39,23 @@ import bodyParser from "body-parser";
 //  app.use(express.json());
  app.use("/admin", admin);
  app.use("/",band);
+ app.use("/researcher",researcher);
+
 /**
  * Server Activation
  */
 
-//  Volunteer.insertVolunteer('volunteer2','dan','levi',1996,'Tel-Aviv','dan@gmail.com',Gender.Male,['sing','sony'],['Hebrew','English'],['service1'],['sunday'],['samsung'],'0545666666','no additional info');  
+// Elderly.getElderlyUsers();
+//  Elderly.insertElderly("123569485","Avi1","Avi","Levi",1950,"Tel-Aviv","avi@gmail.com",Gender.Male,"0545555555",['sing','sony'],['Hebrew','English'],['service1'],['samsung'],"no additional info","Noa","0524226395");
+// Band.insertSleeping("8.5","123569485","12345",new Date());
+// Band.insertDepression(4,"123569485","12345",new Date());
+// Band.insertLoneliness(3,"123569485","65234",new Date());
+// Band.insertPhysicalCondition(3,"123569485","65234",new Date());
+// Band.insertSteps(2000,"123569485","12345", new Date(2023, 0, 4));
+
+
+
+ //  Volunteer.insertVolunteer('volunteer2','dan','levi',1996,'Tel-Aviv','dan@gmail.com',Gender.Male,['sing','sony'],['Hebrew','English'],['service1'],['sunday'],['samsung'],'0545666666','no additional info');  
 // Volunteer.getVolunteerDetails('volunteer1'); 
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);

@@ -1,6 +1,7 @@
-import {Gender} from './gender'
+import { Gender } from './gender';
 
-export interface Volunteer {
+export interface Elderly {
+    id: string;
     username: string;
     firstName: string;
     lastName: string;
@@ -8,10 +9,12 @@ export interface Volunteer {
     email: string;
     city: string;
     gender: Gender;
+    phoneNumber: string;
     areasOfInterest: string[];
     languages: string[];
-    services: string[]; 
+    wantedServices: string[];
     digitalDevices: string[];
-    phoneNumber: string;
     additionalInformation: string;
+    contactName: string;
+    contactPhoneNumber: string;
 };
