@@ -14,8 +14,7 @@ router.get("/getURLTINg", (req,res) => {
     //secret
     "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",
     //link to redirect to
-    // "http://localhost:3000/steps"
-    "http://localhost:3000/bmr"
+    "http://localhost:3000/steps"
     )
 
 const scopes = ["https://www.googleapis.com/auth/fitness.activity.read profile email openid"]
@@ -36,69 +35,69 @@ request(url, (err: any,response: any, body: any) => {
 });
 
 
-// router.get("/steps", async (req,res) => {
-//     const queryURL = new urlParse(req.url);
-//     const code = querystring.parse(queryURL.query).code;
-//     // console.log(code);
-//     const oauth2Client = new google.auth.OAuth2(
-//         //client id
-//         "59463143891-j5k7c9loabghrkdbacb92gpprfrkheed.apps.googleusercontent.com",
-//         //secret
-//         "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",
-//         //link to redirect to
-//         "http://localhost:3000/steps"
-//         );
-//     const tokens = await oauth2Client.getToken(code);
-//     console.log(tokens);
-//     res.send("Hello");
-//     let stepArray = [];
-//     try{
-//         const result = await axios(
-//             {
-//                 method: "POST",
-//                 headers: {
-//                 authorization: "Bearer " + tokens.tokens.access_token,
-//                 },
-//                 "Content-Type": "application/json",
-//                 url: 'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',
-//                 data: {
-//                     aggregateBy:[
-//                         {
-//                             dataTypeName:"com.google.step_count.delta",
-//                             dataSourceId: "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps",
-//                         },
-//                     ],
-//                     bucketByTime: { durationMillis : 86400000},
-//                     // startTimeMillis: 1672178400000,
-//                     startTimeMillis:1672092000000,
-//                     // endTimeMillis: 1672264740000,
-//                     endTimeMillis: 1672351200000,
+router.get("/steps", async (req,res) => {
+    const queryURL = new urlParse(req.url);
+    const code = querystring.parse(queryURL.query).code;
+    // console.log(code);
+    const oauth2Client = new google.auth.OAuth2(
+        //client id
+        "59463143891-j5k7c9loabghrkdbacb92gpprfrkheed.apps.googleusercontent.com",
+        //secret
+        "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",
+        //link to redirect to
+        "http://localhost:3000/steps"
+        );
+    const tokens = await oauth2Client.getToken(code);
+    console.log(tokens);
+    res.send("Hello");
+    let stepArray = [];
+    try{
+        const result = await axios(
+            {
+                method: "POST",
+                headers: {
+                authorization: "Bearer " + tokens.tokens.access_token,
+                },
+                "Content-Type": "application/json",
+                url: 'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',
+                data: {
+                    aggregateBy:[
+                        {
+                            dataTypeName:"com.google.step_count.delta",
+                            dataSourceId: "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps",
+                        },
+                    ],
+                    bucketByTime: { durationMillis : 86400000},
+                    // startTimeMillis: 1672178400000,
+                    startTimeMillis:1672092000000,
+                    // endTimeMillis: 1672264740000,
+                    endTimeMillis: 1672351200000,
 
-//                 },
-//             }
-//         );
+                },
+            }
+        );
 
-//         // console.log(result);
-//         stepArray = result.data.bucket;
-//     }
-//     catch(e){
-//         console.log(e);
-//     }
-//     try{
-//         for ( const dataSet of stepArray){
-//             // console.log(dataSet);
-//             for( const points of dataSet.dataset){
-//                 for( const steps of points.point){
-//                     console.log(steps.value);
-//                     res.status(200).send(steps.value);
-//                 }
-//             }
-//         }
-//     }
-//     catch(e){
-//         console.log(e);
-//     }
-// });
+        // console.log(result);
+        stepArray = result.data.bucket;
+    }
+    catch(e){
+        console.log(e);
+    }
+    try{
+        for ( const dataSet of stepArray){
+            // console.log(dataSet);
+            for( const points of dataSet.dataset){
+                for( const steps of points.point){
+                    console.log(steps.value);
+                    res.status(200).send(steps.value);
+                }
+            }
+        }
+    }
+    catch(e){
+        console.log(e);
+    }
+});
 
 interface DataObject {
     [key: string]: any;
@@ -117,7 +116,7 @@ async function getStepCounts(startTimeMillis: any, endTimeMillis: any) {
       const result = await axios({
         method: "POST",
         headers: {
-          authorization: "Bearer " + 'ya29.a0AX9GBdViGsNwELNN8ddxiHa13Wh_pkJvsY3eQWpcjMebHgvHeoirOfwS69IiQL9jVVC3MtYkO_hPC273zJuQmWwAp6VOA7tdlQU0N5wCbniI4t3azenjX5gMPicZ7jXbEjoc8Jz0RfytA-GrFOlOz-NT35GnaCgYKAQUSARMSFQHUCsbCWY9QZf2Dh3diuKiUUs34fg0163',
+          authorization: "Bearer " + 'ya29.a0AX9GBdV5wWM9CMM4LQXi0WQHlX4NZXVYSDHIU0CGDyMUDb84v8ImUsvMtqbi0lOEE8EZGZjHlwuqdoWPM6zF8z5rXOHQiSBVyGE4nOCbsdMc7TA1DhtRaSqRiR068CneVlZGxY-FEX6__E1_ADKIbEfVtcQjaCgYKAcASARMSFQHUCsbC46Bo_7PAbClIu8UWIG7E1w0163',
         },
         "Content-Type": "application/json",
         url: "https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate",
@@ -200,6 +199,8 @@ async function getStepCounts(startTimeMillis: any, endTimeMillis: any) {
   
     return heartMinutes;
   }
+
+  
 
 
   
