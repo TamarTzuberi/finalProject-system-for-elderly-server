@@ -1,0 +1,41 @@
+export const meetingFields = {
+    volunteerUsername: 'volunteerUsername',
+    elderlyUsername: 'elderlyUsername',
+    date: 'date',
+    meetingSubject: 'subject',
+    duration: 60,
+}
+export const elderlyFields = {
+    id: 'id',
+    username: 'username',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    birthYear: 'birthYear',
+    email: 'email',
+    city: 'city',
+    gender: 'gender',
+    phoneNumber: 'phoneNumber',
+    areasOfInterest: 'areasOfInterest',
+    languages: 'languages',
+    wantedServices: 'wantedServices',
+    digitalDevices: 'digitalDevices',
+    additionalInformation: 'additionalInformation',
+    contactName: 'contactName',
+    contactPhoneNumber: 'contactPhoneNumber',
+}
+
+export const volunteerFields = {
+    username: 'username',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    birthYear: 'birthYear',
+    email: 'email',
+    city: 'city',
+    gender: 'gender',
+    areasOfInterest: 'areasOfInterest',
+    languages: 'languages',
+    services: 'services',
+    digitalDevices: 'digitalDevices',
+    phoneNumber: 'phoneNumber',
+    additionalInformation: 'additionalInformation',
+}
