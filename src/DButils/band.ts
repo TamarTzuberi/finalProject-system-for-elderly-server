@@ -23,19 +23,79 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
 
 
 
-export const insertSteps = async (steps: number,elderlyId: string, googleid: string, date : Date) => {
+// export const insertSteps = async (steps: number,elderlyId: string, googleid: string, date : Date) => {
+//     const client = new MongoClient(config.database.url)
+//     try {
+//         await client.connect()
+//         const db = client.db(config.database.name);
+//         const Steps_collection = db.collection("Steps");
+//         const result = {
+//             "val": steps,
+//             "elderlyId":elderlyId,
+//             "googleid": googleid,
+//             "date": date,
+//         }
+//         await Steps_collection.insertOne(result);
+//     } catch (e) {
+//         console.error(e);
+//     } finally {
+//         client.close()
+//     }
+// }
+
+
+// export const insertHR = async (hr: number, elderlyId: string, googleid: string, date : Date) => {
+//     const client = new MongoClient(config.database.url)
+//     try {
+//         await client.connect()
+//         const db = client.db(config.database.name);
+//         const HR_collection = db.collection("HR");
+//         const result = {
+//             "val": hr,
+//             "elderlyId":elderlyId,
+//             "googleid": googleid,
+//             "date": date,
+//         }
+//         await HR_collection.insertOne(result);
+//     } catch (e) {
+//         console.error(e);
+//     } finally {
+//         client.close()
+//     }
+// }
+
+
+export const insertSteps = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
         const db = client.db(config.database.name);
         const Steps_collection = db.collection("Steps");
-        const result = {
-            "val": steps,
-            "elderlyId":elderlyId,
-            "googleid": googleid,
-            "date": date,
+        for (const [key, value] of Object.entries(data[0])) {
+            console.log(key);
+            console.log(value[0]);
+            await Steps_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].intVal});
         }
-        await Steps_collection.insertOne(result);
+
+    } catch (e) {
+        console.error(e);
+    } finally {
+        client.close()
+    }
+}
+
+export const insertActive = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const Active_collection = db.collection("ActiveMinutes");
+        for (const [key, value] of Object.entries(data[0])) {
+            console.log(key);
+            console.log(value[0]);
+            await Active_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].intVal});
+        }
+
     } catch (e) {
         console.error(e);
     } finally {
@@ -44,25 +104,25 @@ export const insertSteps = async (steps: number,elderlyId: string, googleid: str
 }
 
 
-export const insertHR = async (hr: number, elderlyId: string, googleid: string, date : Date) => {
+
+export const insertHR = async (id:string , data: Array<{ [key: string]: Array<{ fpVal: number, mapVal: any[] }> }>) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
         const db = client.db(config.database.name);
         const HR_collection = db.collection("HR");
-        const result = {
-            "val": hr,
-            "elderlyId":elderlyId,
-            "googleid": googleid,
-            "date": date,
+        for (const [key, value] of Object.entries(data[0])) {
+            await HR_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].fpVal});
         }
-        await HR_collection.insertOne(result);
     } catch (e) {
         console.error(e);
     } finally {
         client.close()
     }
 }
+
+
+
 
 
 export const insertLoneliness = async (loneliness: number,  elderlyId: string, googleid: string, date : Date) => {
