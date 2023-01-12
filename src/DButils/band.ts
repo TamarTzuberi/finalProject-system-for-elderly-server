@@ -91,9 +91,9 @@ export const insertActive = async (id:string , data: Array<{ [key: string]: Arra
         const db = client.db(config.database.name);
         const Active_collection = db.collection("ActiveMinutes");
         for (const [key, value] of Object.entries(data[0])) {
-            console.log(key);
-            console.log(value[0]);
-            await Active_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].intVal});
+            let date = new Date(key);
+            // date.setDate(date.getDate() + 1);
+            await Active_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
