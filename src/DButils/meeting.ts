@@ -7,9 +7,9 @@ import { config } from "./config";
 
 
 
-export const getFullElderlyMeetings = async (username: string): Promise<Meeting[]>=> {
+export const getFullElderlyMeetings = async (elderlyId: string): Promise<Meeting[]>=> {
 	const client = new MongoClient(config.database.url);
-    console.log(username);
+    console.log(elderlyId);
 	try{
 		await client.connect()
 
@@ -17,7 +17,7 @@ export const getFullElderlyMeetings = async (username: string): Promise<Meeting[
 
 		const meetings = db.collection<Meeting>(collectionIds.meetings);
         const aggregationCursor = meetings.aggregate<Meeting>([
-			{ $match: { [meetingFields.elderlyUsername]: username}},
+			{ $match: { [meetingFields.elderlyId]: elderlyId}},
 			{ $lookup:
 				{
 				  from: collectionIds.volunteerUsers,
