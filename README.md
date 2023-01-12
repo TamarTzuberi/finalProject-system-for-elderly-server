@@ -1,6 +1,6 @@
 # README
 
-This repository contains the server for a web application designed for researchers studying the elderly. The server utilizes the Google Fit API to extract data, creates tables in MongoDB, and includes functions for extracting and inserting data to and from the database.
+This repository contains the server for a web application designed for researchers studying the elderly from Ben Gurion university of the Negev. The server utilizes the Google Fit API to extract data, creates tables in MongoDB, and includes functions for extracting and inserting data to and from the database.
 
 
 ### Getting Started
