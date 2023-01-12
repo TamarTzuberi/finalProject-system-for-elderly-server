@@ -20,6 +20,8 @@ This repository contains the server for a web application designed for researche
 The server includes the following endpoints:
 
 GET /data: Retrieves data from the MongoDB database.
+
 POST /data: Inserts data into the MongoDB database.
+
 GET /google-fit: Retrieves data from the Google Fit API.
 
