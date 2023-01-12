@@ -125,19 +125,19 @@ export const insertHR = async (id:string , data: Array<{ [key: string]: Array<{ 
 
 
 
-export const insertLoneliness = async (loneliness: number,  elderlyId: string, googleid: string, date : Date) => {
+
+export const insertLoneliness = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
         const db = client.db(config.database.name);
         const Loneliness_collection = db.collection("Loneliness");
-        const result = {
-            "val": loneliness,
-            "elderlyId":elderlyId,
-            "googleid": googleid,
-            "date": date,
+        for (const [key, value] of Object.entries(data[0])) {
+            let date = new Date(key);
+            // date.setDate(date.getDate() + 1);
+            await Loneliness_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
         }
-        await Loneliness_collection.insertOne(result);
+
     } catch (e) {
         console.error(e);
     } finally {
@@ -146,45 +146,7 @@ export const insertLoneliness = async (loneliness: number,  elderlyId: string, g
 }
 
 
-export const insertPhysicalCondition= async (physicalCondition : number, elderlyId: string, googleid: string, date : Date) => {
-    const client = new MongoClient(config.database.url)
-    try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const physicalCondition_collection = db.collection("PhysicalCondition");
-        const result = {
-            "val": physicalCondition,
-            "elderlyId":elderlyId,
-            "googleid": googleid,
-            "date": date,
-        }
-        await physicalCondition_collection.insertOne(result);
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
-    }
-}
 
-export const insertDepression= async (depression : number,  elderlyId: string, googleid: string, date : Date) => {
-    const client = new MongoClient(config.database.url)
-    try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const depression_collection = db.collection("Depression");
-        const result = {
-            "val": depression,
-            "elderlyId":elderlyId,
-            "googleid": googleid,
-            "date": date,
-        }
-        await depression_collection.insertOne(result);
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
-    }
-}
 
 
 
@@ -205,7 +167,7 @@ export const getFeatureInRequestedDays = async (feature: string, elderlyId: stri
             const projection = { _id: 0 } 
             const cursor = collection.find(query, projection);
             const documents = await cursor.toArray();
-            const result = documents.map((doc: { date: any, val: any }) => ({ [doc.date]: doc.val }))
+            const result = documents.map((doc: { date: any, val: any }) => ({date:doc.date, value:doc.val }))
             console.log(result);
             return result;
           }
@@ -215,6 +177,51 @@ export const getFeatureInRequestedDays = async (feature: string, elderlyId: stri
 
     } catch (e) {
         console.error("");
+    } finally {
+        client.close()
+    }
+}
+
+
+
+
+export const insertDepression = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const depression_collection = db.collection("Depression");
+        for (const [key, value] of Object.entries(data[0])) {
+            let date = new Date(key);
+            // date.setDate(date.getDate() + 1);
+            await depression_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+        }
+
+    } catch (e) {
+        console.error(e);
+    } finally {
+        client.close()
+    }
+}
+
+
+
+
+
+export const insertPhysicalCondition = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const physicalCondition_collection = db.collection("PhysicalCondition"); 
+        for (const [key, value] of Object.entries(data[0])) {
+            let date = new Date(key);
+            // date.setDate(date.getDate() + 1);
+            await physicalCondition_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+        }
+
+    } catch (e) {
+        console.error(e);
     } finally {
         client.close()
     }

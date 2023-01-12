@@ -101,7 +101,7 @@ export const getFullVolunteerMeetings = async (username: string): Promise<Meetin
 
 	
 
-export const insertMeeting = async (volunteerUsername: string, elderlyUsername: string, date: Date, subject: string, duration: number) => {
+export const insertMeeting = async (volunteerUsername: string, elderlyId: string, date: Date, subject: string, duration: number) => {
 	const client = new MongoClient(config.database.url);
 	try{
 		await client.connect()
@@ -111,7 +111,7 @@ export const insertMeeting = async (volunteerUsername: string, elderlyUsername: 
 		const meetings = db.collection<Meeting>(collectionIds.meetings);
 		const meeting = {
 			volunteerUsername,
-			elderlyUsername,
+			elderlyId,
 			date,
             subject,
 			duration,
