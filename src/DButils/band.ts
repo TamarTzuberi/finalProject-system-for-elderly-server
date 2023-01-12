@@ -91,8 +91,11 @@ export const insertActive = async (id:string , data: Array<{ [key: string]: Arra
         const db = client.db(config.database.name);
         const Active_collection = db.collection("ActiveMinutes");
         for (const [key, value] of Object.entries(data[0])) {
+            console.log("before change",key);
             let date = new Date(key);
-            // date.setDate(date.getDate() + 1);
+            // console.log("before change in date format",key);
+            // date.setDate(date.getDate() - 1);
+            // console.log("after change",date);
             await Active_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
         }
 
