@@ -18,12 +18,12 @@ router.get('/features/steps/:elderlyId/:startDate/:endDate', async(req,res,next)
     }
 });
 
-router.get('/features/sleeping/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
+router.get('/features/activeMinutes/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
     try{
         const {elderlyId,startDate, endDate} = req.params;
-        const sleepingsInRequestedDays = await getFeatureInRequestedDays("Sleeping",elderlyId,new Date(startDate), new Date(endDate));
-        console.log(sleepingsInRequestedDays);
-        res.status(200).send(sleepingsInRequestedDays);
+        const activeMinInRequestedDays = await getFeatureInRequestedDays("ActiveMinutes",elderlyId,new Date(startDate), new Date(endDate));
+        console.log(activeMinInRequestedDays);
+        res.status(200).send(activeMinInRequestedDays);
     }catch(e){
         next(e)
     }
