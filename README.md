@@ -4,9 +4,8 @@ This repository contains the server for a web application designed for researche
 
 
 ### Getting Started
-
 1. Clone the repository to your local machine
-`git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY`
+`git clone https://github.com/YOUR-USERNAME/finalProject-system-for-elderly-server.git`
 
 2. Install the necessary dependencies
 `npm install`
@@ -14,6 +13,8 @@ This repository contains the server for a web application designed for researche
 3. Set up a MongoDB database and update the connection string in the config.js file.
 4. Obtain a Google Fit API key and update the config.js file with the key.
 5. Start the server
+`npm start`
+
 
 ### Usage
 The server includes the following endpoints:
