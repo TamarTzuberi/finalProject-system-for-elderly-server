@@ -11,13 +11,14 @@ import * as Volunteer from './DButils/volunteer'
 import { Gender } from "./types/gender";
 import admin from './routers/admin';
 import band from './routers/band';
+import user from './routers/user';
 import researcher from './routers/researcher';
 import * as metting from './DButils/meeting';
 import bodyParser from "body-parser";
 import * as Elderly from './DButils/elderly';
 import * as Band from './DButils/band';
 import elderly from './routers/elderly';
-
+const bcrypt = require('bcrypt');
 
  
  dotenv.config();
@@ -43,20 +44,50 @@ import elderly from './routers/elderly';
  app.use("/",band);
  app.use("/researcher",researcher);
  app.use("/elderly",elderly);
+ app.use("/users",user);
 
 
 /**
  * Server Activation
  */
+//  const MongoClient = require('mongodb').MongoClient;
 
+//  // Database configuration
+//  const dbName = 'AdminsOfElderlySystem';
+//  const url = 'mongodb://localhost:27017';
+//  const adminDbName = 'AdminsOfElderlySystem';
+//  const adminUsername = 'admin';
+//  const adminPassword = 'adminpassword';
+ 
+//  // Create MongoDB client
+//  const client = new MongoClient(url, { useUnifiedTopology: true });
+ 
+//  client.connect(function(err: any) {
+//    if (err) throw err;
+ 
+//    // Get admin database
+//    const adminDb = client.db(adminDbName);
+//    adminDb.collection('').insertOne()
+//    // Create admin user
+//    adminDb.addUser(adminUsername, adminPassword, { roles: ['dbOwner'] }, function(err: any, result: any) {
+//      if (err) throw err;
+//      console.log('Admin user created successfully');
+ 
+//      // Disconnect from MongoDB server
+//      client.close();
+//    });
+//  });
 // Elderly.getElderlyUsers();
-//  Elderly.insertElderly("123569485","Avi1","Avi","Levi",1950,"Tel-Aviv","avi@gmail.com",Gender.Male,"0545555555",['sing','sony'],['Hebrew','English'],['service1'],['samsung'],"no additional info","Noa","0524226395");
+ Elderly.insertElderly("123569485","Avi1","Avi","Levi",1950,"Tel-Aviv","avi@gmail.com",Gender.Male,"0545555555",['sing','sony'],['Hebrew','English'],['service1'],['samsung'],"no additional info","Noa","0524226395");
 // Band.insertSleeping("8.5","123569485","12345",new Date());
 // Band.insertDepression(4,"123569485","12345",new Date());
 // Band.insertLoneliness(3,"123569485","65234",new Date());
 // Band.insertPhysicalCondition(3,"123569485","65234",new Date());
 // Band.insertSteps(2000,"123569485","12345", new Date(2023, 0, 4));
-
+// const saltRounds = 10; // number of salt rounds to use in the hashing process
+// const salt = bcrypt.genSaltSync(saltRounds);
+// const hashedPass = bcrypt.hashSync("researcher123456", salt);
+// User.insertUser("researcherUser",hashedPass,UserRole.Admin);
 
 // metting.insertMeeting("Tamar","123569485",new Date("2022-12-29"),"military",2);
 // metting.insertMeeting("Tamar","123569485",new Date("2022-12-31"),"family",3);

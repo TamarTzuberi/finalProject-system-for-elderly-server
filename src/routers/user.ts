@@ -7,14 +7,16 @@ const router = express.Router();
 
 router.post('/login', async (req, res, next) => {
 	try {
+		console.log("in login");
 		const {username, password} = req.body;
+		console.log(username);
 		// check that username exists
 		const user = await userDB.getUserByUsername(username);
 		if (!user || !bcrypt.compareSync(password, user.password)) {
-			res.status(401).send('Username or Password incorrect');
+			res.status(401).send(false);
 			return;
 		}
-		res.status(200).send(user);
+		res.status(200).send(true);
 	}
 	catch (error) {
 		next(error);

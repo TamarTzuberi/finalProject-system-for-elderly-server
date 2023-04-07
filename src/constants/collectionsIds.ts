@@ -6,5 +6,7 @@ export const collectionIds = {
     responsibleUsers: 'ResponsibleUsers',
     elderlyDailyForms: "DailyForms",
     elderlyInitForm: "InitForm",
-    adjustmentPercentages: "adjustmentPercentages"
+    adjustmentPercentages: "adjustmentPercentages",
+    admins : "Admins",
+    allUsersConverter : "UsersConverter"
 }

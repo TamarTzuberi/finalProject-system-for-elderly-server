@@ -7,35 +7,51 @@ import { FindOptions, MongoClient } from "mongodb";
 import { Projection } from "../constants/mongodbCommands";
 import { Gender } from '../types/gender';
 // import Cookies from 'universal-cookie';
+import { UsersConverter } from "../types/usersConverter";
+const bcrypt = require('bcrypt');
 
-export const insertElderly = async (id:string ,username:string, firstName:string, lastName:string, birthYear:number, city:string, email:string, gender:Gender,
-    phoneNumber:string, areasOfInterest:string[], languages:string[], wantedServices:string[],
-    digitalDevices:string[], additionalInformation:string, contactName:string, contactPhoneNumber:string) => {
+
+
+export const insertElderly = async (elderlyNum:string ,email:string, birthYear:number, city:string, gender:Gender, firstName:string, lastName:string
+   ) => {
+        const uri = 'mongodb://admin:adminpassword@localhost:27017/AdminsOfElderlySystem';
+        const clientAdmin = new MongoClient(uri);
         const client = new MongoClient(config.database.url);
         try{
-            await client.connect()
+            
+            const adminUsername = 'admin';
+            const adminPassword = 'adminpassword';
+            await clientAdmin.connect();
+            const adminDB =  clientAdmin.db(config.adminDatabase.name);
+            console.log("connected to adminDB");
+            const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
+            const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
+ 
+            if(existingUserInAdminDB == undefined)
+            {
+                await usersCollection.insertOne({
+                    email,
+                    elderlyNum,
+                    firstName,
+                    lastName ,
+                });
+            }
+            else{
+                console.log("Username with this userName already exists in the adminDB")
+            }
+            const hashEmail =  convertToHashId(email);
+            await client.connect();
             const db = client.db(config.database.name);
             const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
-            const existingElderly =await elderlies.findOne({ username: username });	
+            const existingElderly =await elderlies.findOne({ elderlyNum: elderlyNum });	
             if(existingElderly == undefined)
             {
                 await elderlies.insertOne({
-                    id,
-                    username,
-                    firstName,
-                    lastName,
+                    elderlyNum,
+                    hashEmail,
                     birthYear,
                     city,
-                    email,
                     gender,
-                    phoneNumber,				
-                    areasOfInterest,
-                    languages,
-                    wantedServices,
-                    digitalDevices,
-                    additionalInformation,
-                    contactName,
-                    contactPhoneNumber,
                 });
             }
             else{
@@ -47,6 +63,7 @@ export const insertElderly = async (id:string ,username:string, firstName:string
         }
         finally {
             client.close();  
+            clientAdmin.close();
         }
 }
 
@@ -71,7 +88,12 @@ export const getElderlyUsers = async() => {
 }
 
 
-
+function convertToHashId(id: String) {
+    const saltRounds = 10; // number of salt rounds to use in the hashing process
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedId = bcrypt.hashSync(id, salt);
+    return hashedId;
+  }
 
 
 

@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 import { config } from './config';
 
-export const insertSleeping = async (sleeping: string,elderlyId: string, googleid: string, date : Date) => {
+export const insertSleeping = async (sleeping: string,elderlyNum: string, googleid: string, date : Date) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
@@ -9,7 +9,7 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
         const Sleeping_collection = db.collection("Sleeping");
         const result = {
             "val": sleeping,
-            "elderlyId":elderlyId,
+            "elderlyNum":elderlyNum,
             "googleid": googleid,
             "date": date,
         }
@@ -23,7 +23,7 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
 
 
 
-// export const insertSteps = async (steps: number,elderlyId: string, googleid: string, date : Date) => {
+// export const insertSteps = async (steps: number,elderlyNum: string, googleid: string, date : Date) => {
 //     const client = new MongoClient(config.database.url)
 //     try {
 //         await client.connect()
@@ -31,7 +31,7 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
 //         const Steps_collection = db.collection("Steps");
 //         const result = {
 //             "val": steps,
-//             "elderlyId":elderlyId,
+//             "elderlyNum":elderlyNum,
 //             "googleid": googleid,
 //             "date": date,
 //         }
@@ -44,7 +44,7 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
 // }
 
 
-// export const insertHR = async (hr: number, elderlyId: string, googleid: string, date : Date) => {
+// export const insertHR = async (hr: number, elderlyNum: string, googleid: string, date : Date) => {
 //     const client = new MongoClient(config.database.url)
 //     try {
 //         await client.connect()
@@ -52,7 +52,7 @@ export const insertSleeping = async (sleeping: string,elderlyId: string, googlei
 //         const HR_collection = db.collection("HR");
 //         const result = {
 //             "val": hr,
-//             "elderlyId":elderlyId,
+//             "elderlyNum":elderlyNum,
 //             "googleid": googleid,
 //             "date": date,
 //         }
@@ -74,7 +74,7 @@ export const insertSteps = async (id:string , data: Array<{ [key: string]: Array
         for (const [key, value] of Object.entries(data[0])) {
             console.log(key);
             console.log(value[0]);
-            await Steps_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].intVal});
+            await Steps_collection.insertOne({elderlyNum:id,date: new Date(key), val: value[0].intVal});
         }
 
     } catch (e) {
@@ -96,7 +96,7 @@ export const insertActive = async (id:string , data: Array<{ [key: string]: Arra
             // console.log("before change in date format",key);
             // date.setDate(date.getDate() - 1);
             // console.log("after change",date);
-            await Active_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+            await Active_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
@@ -115,7 +115,7 @@ export const insertHR = async (id:string , data: Array<{ [key: string]: Array<{ 
         const db = client.db(config.database.name);
         const HR_collection = db.collection("HR");
         for (const [key, value] of Object.entries(data[0])) {
-            await HR_collection.insertOne({elderlyId:id,date: new Date(key), val: value[0].fpVal});
+            await HR_collection.insertOne({elderlyNum:id,date: new Date(key), val: value[0].fpVal});
         }
     } catch (e) {
         console.error(e);
@@ -138,7 +138,7 @@ export const insertLoneliness = async (id:string , data: Array<{ [key: string]: 
         for (const [key, value] of Object.entries(data[0])) {
             let date = new Date(key);
             // date.setDate(date.getDate() + 1);
-            await Loneliness_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+            await Loneliness_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
@@ -153,7 +153,7 @@ export const insertLoneliness = async (id:string , data: Array<{ [key: string]: 
 
 
 
-export const getFeatureInRequestedDays = async (feature: string, elderlyId: string, startDate: Date, endDate: Date) => {
+export const getFeatureInRequestedDays = async (feature: string, elderlyNum: string, startDate: Date, endDate: Date) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
@@ -161,7 +161,7 @@ export const getFeatureInRequestedDays = async (feature: string, elderlyId: stri
         const collection = db.collection(feature);
         if (startDate && endDate) {
             const query = {
-              elderlyId: elderlyId,
+              elderlyNum: elderlyNum,
               date: {
                 $gte: startDate,
                 $lte: endDate
@@ -197,7 +197,7 @@ export const insertDepression = async (id:string , data: Array<{ [key: string]: 
         for (const [key, value] of Object.entries(data[0])) {
             let date = new Date(key);
             // date.setDate(date.getDate() + 1);
-            await depression_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+            await depression_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
@@ -220,7 +220,7 @@ export const insertPhysicalCondition = async (id:string , data: Array<{ [key: st
         for (const [key, value] of Object.entries(data[0])) {
             let date = new Date(key);
             // date.setDate(date.getDate() + 1);
-            await physicalCondition_collection.insertOne({elderlyId:id,date: date, val: value[0].intVal});
+            await physicalCondition_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
