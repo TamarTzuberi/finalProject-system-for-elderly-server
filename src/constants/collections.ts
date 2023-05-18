@@ -1,6 +1,5 @@
 export const meetingFields = {
-    volunteerUsername: 'volunteerUsername',
-    elderlyId: 'elderlyId',
+    elderlyNum: 'elderlyNum',
     date: 'date',
     meetingSubject: 'subject',
     duration: 60,

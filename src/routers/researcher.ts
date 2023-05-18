@@ -2,7 +2,7 @@
 import {insertUser} from '../DButils/user';
 import {UserRole} from '../types/user';
 import express from 'express';
-import { getFeatureInRequestedDays } from '../DButils/band';
+import { getFeatureInRequestedDays, getFeatureInRequestedDaysCityGender } from '../DButils/band';
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -17,6 +17,19 @@ router.get('/features/steps/:elderlyId/:startDate/:endDate', async(req,res,next)
         next(e)
     }
 });
+
+
+router.get('/features/steps/:city/:gender/:startDate/:endDate', async(req,res,next)=>{
+    try{
+        const {city,gender,startDate, endDate} = req.params;
+        const stepsInRequestedDays = await getFeatureInRequestedDaysCityGender("Steps",city,gender,new Date(startDate), new Date(endDate));
+        console.log(stepsInRequestedDays);
+        res.status(200).send(stepsInRequestedDays);
+    }catch(e){
+        next(e)
+    }
+});
+
 
 router.get('/features/activeMinutes/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
     try{
@@ -50,6 +63,8 @@ router.get('/features/loneliness/:elderlyId/:startDate/:endDate', async(req,res,
         next(e)
     }
 });
+
+
 
 
 router.get('/features/depression/:elderlyId/:startDate/:endDate', async(req,res,next)=>{

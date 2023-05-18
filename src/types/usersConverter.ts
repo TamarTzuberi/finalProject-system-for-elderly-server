@@ -1,4 +1,7 @@
 export interface UsersConverter {
-    id : string,
-    hashId : string,
+    email : string,
+    elderlyNum : string,
+    firstName : string,
+    lastName : string,
+    password : string,
 }

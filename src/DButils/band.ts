@@ -1,25 +1,7 @@
 const { MongoClient } = require('mongodb');
+import { collectionIds } from '../constants/collectionsIds';
+import { Elderly } from '../types/elderly';
 import { config } from './config';
-
-export const insertSleeping = async (sleeping: string,elderlyNum: string, googleid: string, date : Date) => {
-    const client = new MongoClient(config.database.url)
-    try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const Sleeping_collection = db.collection("Sleeping");
-        const result = {
-            "val": sleeping,
-            "elderlyNum":elderlyNum,
-            "googleid": googleid,
-            "date": date,
-        }
-        await Sleeping_collection.insertOne(result);
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
-    }
-}
 
 
 
@@ -129,30 +111,6 @@ export const insertHR = async (id:string , data: Array<{ [key: string]: Array<{ 
 
 
 
-export const insertLoneliness = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
-    const client = new MongoClient(config.database.url)
-    try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const Loneliness_collection = db.collection("Loneliness");
-        for (const [key, value] of Object.entries(data[0])) {
-            let date = new Date(key);
-            // date.setDate(date.getDate() + 1);
-            await Loneliness_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
-        }
-
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
-    }
-}
-
-
-
-
-
-
 export const getFeatureInRequestedDays = async (feature: string, elderlyNum: string, startDate: Date, endDate: Date) => {
     const client = new MongoClient(config.database.url)
     try {
@@ -185,47 +143,91 @@ export const getFeatureInRequestedDays = async (feature: string, elderlyNum: str
     }
 }
 
-
-
-
-export const insertDepression = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
-    const client = new MongoClient(config.database.url)
-    try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const depression_collection = db.collection("Depression");
-        for (const [key, value] of Object.entries(data[0])) {
-            let date = new Date(key);
-            // date.setDate(date.getDate() + 1);
-            await depression_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
-        }
-
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
+function calculateMean(values: number[]): number {
+    if (values.length === 0) {
+      return 0;
     }
-}
+  
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    const mean = sum / values.length;
+    return mean;
+  }
 
-
-
-
-
-export const insertPhysicalCondition = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
-    const client = new MongoClient(config.database.url)
+export const getFeatureInRequestedDaysCityGender = async (
+    feature: string,
+    city: string,
+    gender: string,
+    startDate: Date,
+    endDate: Date
+  ) => {
+    const client = new MongoClient(config.database.url);
     try {
-        await client.connect()
-        const db = client.db(config.database.name);
-        const physicalCondition_collection = db.collection("PhysicalCondition"); 
-        for (const [key, value] of Object.entries(data[0])) {
-            let date = new Date(key);
-            // date.setDate(date.getDate() + 1);
-            await physicalCondition_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
-        }
-
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.close()
+      await client.connect();
+      const db = client.db(config.database.name);
+      let elderlyQuery;
+      const elderliesCollection = db.collection("Elderlies");
+      if (city == "All"){
+        elderlyQuery = {
+            gender: gender
+          };
+      }
+      else if(gender == "All"){
+        console.log("in all gender");
+        elderlyQuery = {
+            city: city,
+          };
+      }
+      else{
+      elderlyQuery = {
+        city: city,
+        gender: gender
+      };
     }
-}
+      const elderlyProjection = { _id: 0, elderlyNum: 1 };
+      const elderlyCursor = elderliesCollection.find(elderlyQuery, elderlyProjection);
+      const elderlyDocuments = await elderlyCursor.toArray();
+      const matchingElderlyNums = elderlyDocuments.map((doc: { elderlyNum: string }) => doc.elderlyNum);
+      console.log("matchingElderlyNums",matchingElderlyNums);
+      const collection = db.collection(feature);
+  
+      if (startDate && endDate) {
+        const query = {
+          elderlyNum: { $in: matchingElderlyNums },
+          date: {
+            $gte: startDate,
+            $lte: endDate
+          }
+        };
+  
+        const projection = { _id: 0, val: 1, date: 1 };
+const cursor = collection.find(query, projection);
+const documents = await cursor.toArray();
+
+const dailyValues: { [date: string]: number[] } = {};
+
+documents.forEach((doc: { date: Date; val: number }) => {
+  const dateString = doc.date.toISOString().split('T')[0];
+
+  if (!dailyValues[dateString]) {
+    dailyValues[dateString] = [];
+  }
+
+  dailyValues[dateString].push(doc.val);
+});
+
+const result = Object.keys(dailyValues).map((date: string) => ({
+  date,
+  value: calculateMean(dailyValues[date]),
+}));
+
+console.log(result);
+return result;
+      } else {
+      }
+    } catch (e) {
+      console.error("");
+    } finally {
+      client.close();
+    }
+  };
+  

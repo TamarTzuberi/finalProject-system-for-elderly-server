@@ -8,5 +8,6 @@ export const collectionIds = {
     elderlyInitForm: "InitForm",
     adjustmentPercentages: "adjustmentPercentages",
     admins : "Admins",
-    allUsersConverter : "UsersConverter"
+    allUsersConverter : "UsersConverter",
+    questionnaires : "Questionnaires"
 }
