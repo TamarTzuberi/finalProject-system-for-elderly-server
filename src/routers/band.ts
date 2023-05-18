@@ -11,6 +11,23 @@ const {google} = require("googleapis")
 interface DataObject {
   [date: string]: number;
 }
+let savedCookieIdToken;
+let savedCookieAccessToken: string;
+let savedCookieEmail;
+
+
+router.post('/api/cookies', async (req, res) => {
+  const { cookieIdToken, cookieAccessToken, cookieEmail } = req.body;
+  console.log('Received cookies:');
+  console.log('Cookie 1:', cookieIdToken);
+  console.log('Cookie 2:', cookieAccessToken);
+  console.log('Cookie 3:', cookieEmail);
+    // Save the cookies to variables if needed
+  savedCookieIdToken = cookieIdToken;
+  savedCookieAccessToken = cookieAccessToken;
+  savedCookieEmail = cookieEmail;
+});
+
 
 router.get("/getSteps", (req,res) => {
     const oauth2Client = new google.auth.OAuth2(
@@ -50,7 +67,8 @@ router.get("/steps", async (req,res) => {
       //link to redirect to
       "http://localhost:3000/steps"
       );
-  const tokens = await oauth2Client.getToken(code);
+  // const tokens = await oauth2Client.getToken(code);
+
   const stepData: DataObject = {};
 
   try{
@@ -58,8 +76,9 @@ router.get("/steps", async (req,res) => {
           {
               method: "POST",
               headers: {
-              authorization: "Bearer " + tokens.tokens.access_token,
-              },
+              // authorization: "Bearer " + tokens.tokens.access_token,
+              authorization: "Bearer " + savedCookieAccessToken ,
+            },
               "Content-Type": "application/json",
               url: 'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',
               data: {
