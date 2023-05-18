@@ -2,7 +2,7 @@
 import {insertUser} from '../DButils/user';
 import {UserRole} from '../types/user';
 import express from 'express';
-import { getFeatureInRequestedDays } from '../DButils/band';
+import { getFeatureInRequestedDays, getFeatureInRequestedDaysCityGender } from '../DButils/band';
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -18,12 +18,25 @@ router.get('/features/steps/:elderlyId/:startDate/:endDate', async(req,res,next)
     }
 });
 
-router.get('/features/sleeping/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
+
+router.get('/features/:feature/:city/:gender/:startDate/:endDate', async(req,res,next)=>{
+    try{
+        const {feature,city,gender,startDate, endDate} = req.params;
+        const stepsInRequestedDays = await getFeatureInRequestedDaysCityGender(feature,city,gender,new Date(startDate), new Date(endDate));
+        console.log(stepsInRequestedDays);
+        res.status(200).send(stepsInRequestedDays);
+    }catch(e){
+        next(e)
+    }
+});
+
+
+router.get('/features/activeMinutes/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
     try{
         const {elderlyId,startDate, endDate} = req.params;
-        const sleepingsInRequestedDays = await getFeatureInRequestedDays("Sleeping",elderlyId,new Date(startDate), new Date(endDate));
-        console.log(sleepingsInRequestedDays);
-        res.status(200).send(sleepingsInRequestedDays);
+        const activeMinInRequestedDays = await getFeatureInRequestedDays("ActiveMinutes",elderlyId,new Date(startDate), new Date(endDate));
+        console.log(activeMinInRequestedDays);
+        res.status(200).send(activeMinInRequestedDays);
     }catch(e){
         next(e)
     }
@@ -50,6 +63,8 @@ router.get('/features/loneliness/:elderlyId/:startDate/:endDate', async(req,res,
         next(e)
     }
 });
+
+
 
 
 router.get('/features/depression/:elderlyId/:startDate/:endDate', async(req,res,next)=>{

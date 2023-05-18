@@ -26,6 +26,7 @@ import { MongoClient } from "mongodb";
 		else{
 			console.log("Username already exists in the system")
 		}
+
 	
 
 	}
@@ -54,6 +55,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 		client.close();  
 	}
 }
+
 
 export const updateUserPassword = async (username: string, password: string) => {
 

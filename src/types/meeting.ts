@@ -1,6 +1,5 @@
 export interface Meeting {
-    volunteerUsername: string;
-    elderlyUsername: string;
+    elderlyNum: string;
     date: Date;
     subject: string;
     duration: number;

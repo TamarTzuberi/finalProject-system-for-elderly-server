@@ -7,35 +7,56 @@ import { FindOptions, MongoClient } from "mongodb";
 import { Projection } from "../constants/mongodbCommands";
 import { Gender } from '../types/gender';
 // import Cookies from 'universal-cookie';
+import { UsersConverter } from "../types/usersConverter";
+const bcrypt = require('bcrypt');
 
-export const insertElderly = async (id:string ,username:string, firstName:string, lastName:string, birthYear:number, city:string, email:string, gender:Gender,
-    phoneNumber:string, areasOfInterest:string[], languages:string[], wantedServices:string[],
-    digitalDevices:string[], additionalInformation:string, contactName:string, contactPhoneNumber:string) => {
+
+
+export const insertElderly = async (elderlyNum:string ,email:string, birthYear:number, city:string, gender:Gender, firstName:string, lastName:string,password:string
+   ) => {
+        const uri = 'mongodb://admin:adminpassword@localhost:27017/AdminsOfElderlySystem';
+        const clientAdmin = new MongoClient(uri);
         const client = new MongoClient(config.database.url);
         try{
-            await client.connect()
+        //     console.log("insertElderly");
+        //     const adminUsername = 'admin';
+        //     const adminPassword = 'adminpassword';
+        //     await clientAdmin.connect();
+        //     const adminDB =  clientAdmin.db(config.adminDatabase.name);
+        //     console.log("connected to adminDB");
+        //     const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
+        //     const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
+ 
+        //     if(existingUserInAdminDB == undefined)
+        //     {
+        //         await usersCollection.insertOne({
+        //             email,
+        //             elderlyNum,
+        //             firstName,
+        //             lastName ,
+        //             password
+        //         });
+        //     }
+        //     else{
+        //         console.log("Username with this userName already exists in the adminDB")
+        //     }
+            const hashEmail =  convertToHashId(email);
+            const hashPassword = convertToHashId(password);
+            await client.connect();
+            console.log("conect to regular");
+
             const db = client.db(config.database.name);
             const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
-            const existingElderly =await elderlies.findOne({ username: username });	
+            const existingElderly =await elderlies.findOne({ elderlyNum: elderlyNum });	
             if(existingElderly == undefined)
             {
                 await elderlies.insertOne({
-                    id,
-                    username,
-                    firstName,
-                    lastName,
+                    elderlyNum,
+                    hashEmail,
+                    hashPassword,
                     birthYear,
                     city,
-                    email,
                     gender,
-                    phoneNumber,				
-                    areasOfInterest,
-                    languages,
-                    wantedServices,
-                    digitalDevices,
-                    additionalInformation,
-                    contactName,
-                    contactPhoneNumber,
                 });
             }
             else{
@@ -43,10 +64,12 @@ export const insertElderly = async (id:string ,username:string, firstName:string
             }
         }
         catch(error){
-            console.error(error);
+            
+            console.error("in catch",error);
         }
         finally {
             client.close();  
+            clientAdmin.close();
         }
 }
 
@@ -69,6 +92,38 @@ export const getElderlyUsers = async() => {
         client.close();
     }
 }
+
+
+
+export const getElderyByEmail = async (email: string): Promise<Elderly | null> => {
+
+	const client = new MongoClient(config.database.url);
+	try {
+        console.log("in getElderyByEmail");
+		await client.connect();
+		const db = client.db(config.database.name);
+		const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
+        const hashEmail = convertToHashId(email);
+		const elderlyUser = await elderlies.findOne({hashEmail});
+		console.log("the eldery user",elderlyUser);
+		return elderlyUser;
+	}
+	catch(error) {
+		throw(error);
+	}
+	finally {
+		client.close();  
+	}
+}
+
+
+function convertToHashId(id: String) {
+    const saltRounds = 10; // number of salt rounds to use in the hashing process
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedId = bcrypt.hashSync(id, salt);
+    return hashedId;
+  }
+
 
 
 
