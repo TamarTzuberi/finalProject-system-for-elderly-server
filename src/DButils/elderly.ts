@@ -8,7 +8,7 @@ import { Projection } from "../constants/mongodbCommands";
 import { Gender } from '../types/gender';
 // import Cookies from 'universal-cookie';
 import { UsersConverter } from "../types/usersConverter";
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 
 
@@ -40,7 +40,9 @@ export const insertElderly = async (elderlyNum:string ,email:string, birthYear:n
         //     else{
         //         console.log("Username with this userName already exists in the adminDB")
         //     }
+        console.log("the email ",email);
             const hashEmail =  convertToHashId(email);
+            console.log("hash email in insert",hashEmail);
             const hashPassword = convertToHashId(password);
             await client.connect();
             console.log("conect to regular");
@@ -103,7 +105,11 @@ export const getElderyByEmail = async (email: string): Promise<Elderly | null> =
 		await client.connect();
 		const db = client.db(config.database.name);
 		const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
+        console.log("email",email);
+
         const hashEmail = convertToHashId(email);
+        console.log("hashEmail",hashEmail);
+
 		const elderlyUser = await elderlies.findOne({hashEmail});
 		console.log("the eldery user",elderlyUser);
 		return elderlyUser;
@@ -117,13 +123,10 @@ export const getElderyByEmail = async (email: string): Promise<Elderly | null> =
 }
 
 
-function convertToHashId(id: String) {
-    const saltRounds = 10; // number of salt rounds to use in the hashing process
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const hashedId = bcrypt.hashSync(id, salt);
-    return hashedId;
+function convertToHashId(id : string) {
+    const hash = crypto.createHash('sha256');
+    hash.update(id);
+    const hashVal =hash.digest('hex');
+    console.log("hash is",hashVal);
+    return hashVal;
   }
-
-
-
-

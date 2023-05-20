@@ -38,8 +38,8 @@ router.get('/allElderlyUsers', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
 	try {
 		console.log("in login elderly");
-		const {email} = req.body.email;
-		console.log(email);
+		const email = req.body.email;
+		console.log("body",email);
 		// check that email exists
 		const elderlyUser = await elderly.getElderyByEmail(email);
 		if (!elderlyUser) {
