@@ -18,6 +18,8 @@ import * as metting from './DButils/meeting';
 import bodyParser from "body-parser";
 import * as Elderly from './DButils/elderly';
 import * as Band from './DButils/band';
+import * as Subjective from './DButils/subjective';
+
 import * as Questionnaires from './DButils/questionnaires';
 import subjective from './routers/subjective';
 
@@ -92,7 +94,13 @@ const bcrypt = require('bcrypt');
 //  Elderly.insertElderly("10","Tamar@gmail.com",1950,"Ramat Gan",Gender.Female,"lala","kakaa","kakaka");
 // Band.insertSleeping("8.5","123569485","12345",new Date());
 // Band.insertDepression(4,"123569485","12345",new Date());
-// Band.insertLoneliness(3,"123569485","65234",new Date());
+// Subjective.insertDepression("4",new Date("2022-12-28"),3);
+// Subjective.insertDepression("4",new Date("2022-12-27"),4);
+// Subjective.insertDepression("4",new Date("2022-12-29"),1);
+// Subjective.insertPhysicalCondition("4",new Date("2022-12-28"),2);
+// Subjective.insertPhysicalCondition("4",new Date("2022-12-27"),4);
+// Subjective.insertSleeping("4",new Date("2022-12-29"),5);
+
 // Band.insertPhysicalCondition(3,"123569485","65234",new Date());
 // Band.insertSteps(2000,"123569485","12345", new Date(2023, 0, 4));
 // const saltRounds = 10; // number of salt rounds to use in the hashing process

@@ -90,5 +90,14 @@ router.get('/features/physicalCondition/:elderlyId/:startDate/:endDate', async(r
 });
 
 
-
+router.get('/features/sleep/:elderlyId/:startDate/:endDate', async(req,res,next)=>{
+    try{
+        const {elderlyId,startDate, endDate} = req.params;
+        const pcInRequestedDays = await getFeatureInRequestedDays("Sleeping",elderlyId,new Date(startDate), new Date(endDate));
+        console.log(pcInRequestedDays);
+        res.status(200).send(pcInRequestedDays);
+    }catch(e){
+        next(e)
+    }
+});
 export default router;

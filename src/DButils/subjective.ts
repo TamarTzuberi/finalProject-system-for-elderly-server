@@ -32,9 +32,9 @@ export const insertPhysicalCondition = async (id:string ,date:Date, data: number
         await physicalCondition_collection.insertOne({elderlyNum:id, date: date, val: data});
 
     } catch (e) {
+        console.log("failed to insert PhysicalCondition");
         console.error(e);
     } finally {
-        console.log("failed to insert PhysicalCondition");
         client.close()
     }
 }
