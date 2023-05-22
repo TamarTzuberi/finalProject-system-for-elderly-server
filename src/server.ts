@@ -93,7 +93,7 @@ import { config } from "./DButils/config";
 
 // Questionnaires.insertQuestionnaires(["q5", "q6", "q7"],1);
 // Elderly.getElderlyUsers();
-//Elderly.insertElderly("4","elderytest@gmail.com",1950,"Ramat Gan",Gender.Female,"lala","kakaa","kakaka");
+//Elderly.insertElderly("elderlyt@gmail.com",1950,"Ramat Gan",Gender.Female,"lala","kakaa");
 // Band.insertSleeping("8.5","123569485","12345",new Date());
 // Band.insertDepression(4,"123569485","12345",new Date());
 // Subjective.insertDepression("4",new Date("2022-12-28"),3);

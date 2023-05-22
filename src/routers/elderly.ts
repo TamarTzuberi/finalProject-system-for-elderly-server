@@ -55,4 +55,20 @@ router.post('/login', async (req, res, next) => {
   });
   
 
+  router.post('/newElderly', async (req, res, next) => {
+	try {
+	  console.log("in insert elderly");
+	  const addingUser = await elderly.insertElderly(req.body.email,req.body.birthYear,req.body.city,req.body.gender,req.body.firstName,req.body.lastName);
+	  if (addingUser.success) {
+		res.status(200).send(addingUser);
+		return;
+	  }
+	  res.status(200).send(addingUser);
+	} catch (error) {
+	  next(error);
+	  console.log(error);
+	  res.status(401).send({success: false ,message: 'Adding user failed',});
+	}
+  });
+
 export default router;
