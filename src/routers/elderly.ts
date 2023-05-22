@@ -37,23 +37,22 @@ router.get('/allElderlyUsers', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
 	try {
-		console.log("in login elderly");
-		const email = req.body.email;
-		console.log("body",email);
-		// check that email exists
-		const elderlyUser = await elderly.getElderyByEmail(email);
-		if (!elderlyUser) {
-			res.status(401).send(false);
-			return;
-		}
-		res.status(200).send(true);
+	  console.log("in login elderly");
+	  const email = req.body.email;
+	  console.log("body", email);
+	  // check that email exists
+	  const elderlyUser = await elderly.getElderyByEmail(email);
+	  if (!elderlyUser) {
+		res.status(200).send({ success: false, elderlyNum: null });
+		return;
+	  }
+	  res.status(200).send({ success: true, elderlyNum: elderlyUser.elderlyNum });
+	} catch (error) {
+	  next(error);
+	  console.log(error);
+	  res.status(401).send({ message: 'login failed', success: false, elderlyNum: null });
 	}
-	catch (error) {
-		next(error);
-		console.log(error);
-		res.status(401).send({message: 'login failed' , success: false});
-	}
-});
-
+  });
+  
 
 export default router;

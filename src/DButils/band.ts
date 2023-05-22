@@ -46,6 +46,53 @@ import { config } from './config';
 //     }
 // }
 
+export const getLastUpdateDateBand = async (feature : string ) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const lastUpdate_collection = db.collection("LastUpdateDateBand");
+        const query = {
+            _id : feature,
+        }
+        const LastUpdateDateBand = await lastUpdate_collection.findOne(query);
+        console.log("LastUpdateDateBand ",LastUpdateDateBand);
+        return LastUpdateDateBand;
+    } catch (e) {
+        console.error(e);
+    } finally {
+        client.close()
+    }
+}
+
+import { MongoClient } from 'mongodb';
+
+export const insertLastUpdateDateBand = async (feature: string, date: Date) => {
+  const client = new MongoClient(config.database.url);
+  try {
+    await client.connect();
+    const db = client.db(config.database.name);
+    const lastUpdate_collection = db.collection("LastUpdateDateBand");
+    const query = { _id: feature };
+    const existingDocument = await lastUpdate_collection.findOne(query);
+
+    if (!existingDocument) {
+      const newDate = {
+        _id: feature,
+        date: date
+      };
+      await lastUpdate_collection.insertOne(newDate);
+    } else {
+      const update = { $set: { date: date } };
+      await lastUpdate_collection.updateOne(query, update);
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setTimeout(() => { client.close() }, 1500);
+  }
+};
+
 
 export const insertSteps = async (id:string , data: Array<{ [key: string]: Array<{ intVal: number, mapVal: any[] }> }>) => {
     const client = new MongoClient(config.database.url)
