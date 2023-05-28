@@ -1,7 +1,7 @@
 import { config } from "./config";
 import { collectionIds } from '../constants/collectionsIds';
 import { Elderly } from "../types/elderly";
-import { MongoClient } from "mongodb";
+import { IntegerType, MongoClient } from "mongodb";
 import { Gender } from '../types/gender';
 const crypto = require('crypto');
 const createElderlyCounter = () => {
@@ -125,6 +125,26 @@ const createElderlyCounter = () => {
 //             clientAdmin.close();
 //         }
 // }
+
+export const updateElderly = async (elderlyNum:number, birthYear:number, city:string, gender:Gender, firstName:string, lastName:string) => {
+  console.log("in updateElderly");
+  const client = new MongoClient(config.database.url);
+  try {
+    await client.connect();
+    const db = client.db(config.database.name);
+    const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
+    const query = { elderlyNum: elderlyNum };
+
+    const update = { $set: { birthYear: birthYear, city: city, gender: gender, firstName: firstName, lastName: lastName } };
+    await elderlies.updateOne(query, update);
+    return { success: true };
+  } catch (e) {
+    console.error(e);
+    return { success: false };
+  } finally {
+    client.close();
+  }
+};
 
     
 export const getElderlyUsers = async() => {

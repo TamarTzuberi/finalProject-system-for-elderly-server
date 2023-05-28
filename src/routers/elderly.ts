@@ -71,4 +71,20 @@ router.post('/login', async (req, res, next) => {
 	}
   });
 
+  router.post('/updateElderly', async (req, res, next) => {
+	try {
+	  console.log("in update elderly");
+	  const updateUser = await elderly.updateElderly(req.body.elderlyNum, req.body.birthYear,req.body.city,req.body.gender,req.body.firstName,req.body.lastName);
+	  if (updateUser.success) {
+		res.status(200).send(updateUser);
+		return;
+	  }
+	  res.status(200).send(updateUser);
+	} catch (error) {
+	  next(error);
+	  console.log(error);
+	  res.status(401).send({success: false ,message: 'Update user failed',});
+	}
+  });
+
 export default router;
