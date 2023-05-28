@@ -175,8 +175,17 @@ export const getFeatureInRequestedDays = async (feature: string, elderlyNum: str
             const projection = { _id: 0 } 
             const cursor = collection.find(query, projection);
             const documents = await cursor.toArray();
-            const result = documents.map((doc: { date: any, val: any }) => ({date:doc.date, value:doc.val }))
-            console.log(result);
+            const result = documents
+            .map((doc: { date: any, val: any }) => ({ date: doc.date, value: doc.val }))
+            .sort((a: { date: string | number | Date; }, b: { date: string | number | Date; }) => {
+              const dateA = new Date(a.date);
+              const dateB = new Date(b.date);
+              return dateA < dateB ? -1 : dateA > dateB ? 1 : 0;
+            });
+
+console.log(result);
+
+
             return result;
           }
         else{
