@@ -68,51 +68,58 @@ app.use("/questionnaires", questionnairesR);
 app.use("/subjective", subjective);
 
 
-var port = '443';
-var host = "elderyresearch.cs.bgu.ac.il"
-app.set('port', port);
+// var port = '443';
+// var host = "elderyresearch.cs.bgu.ac.il"
+// app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-var server = https.createServer(httpsOptions, app).listen(port, host, () => {
-   console.log(`Server is running on https://${host}:${port}`);
-});;
+// var server = https.createServer(httpsOptions, app).listen(port, host, () => {
+//    console.log(`Server is running on https://${host}:${port}`);
+// });;
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-function onError(error: { syscall: string; code: any; }) {
-   if (error.syscall !== 'listen') {
-      throw error;
-   }
-   var bind = typeof port === 'string'
-      ? 'Pipe ' + port
-      : 'Port ' + port;
-   // handle specific listen errors with friendly messages
-   switch (error.code) {
-      case 'EACCES':
-         console.error(bind + ' requires elevated privileges');
-         process.exit(1);
-         break;
-      case 'EADDRINUSE':
-         console.error(bind + ' is already in use');
-         process.exit(1);
-         break;
-      default:
-         throw error;
-   }
-}
+// function onError(error: { syscall: string; code: any; }) {
+//    if (error.syscall !== 'listen') {
+//       throw error;
+//    }
+//    var bind = typeof port === 'string'
+//       ? 'Pipe ' + port
+//       : 'Port ' + port;
+//    // handle specific listen errors with friendly messages
+//    switch (error.code) {
+//       case 'EACCES':
+//          console.error(bind + ' requires elevated privileges');
+//          process.exit(1);
+//          break;
+//       case 'EADDRINUSE':
+//          console.error(bind + ' is already in use');
+//          process.exit(1);
+//          break;
+//       default:
+//          throw error;
+//    }
+// }
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 //  address("https://elderyresearch.cs.bgu.ac.il");
 
-function onListening() {
-   var addr = server.address();
-   var bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-   console.log(`Server listen in port ${port} in adrress ${addr.address}`);
-}
+// function onListening() {
+//    var addr = server.address();
+//    var bind = typeof addr === 'string'
+//       ? 'pipe ' + addr
+//       : 'port ' + addr.port;
+//    console.log(`Server listen in port ${port} in adrress ${addr.address}`);
+// }
+
+
+
+//run localhost
+app.listen(PORT, () => {
+   console.log(`Listening on port ${PORT}`);
+ });
