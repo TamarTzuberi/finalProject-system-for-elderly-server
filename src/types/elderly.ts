@@ -6,4 +6,5 @@ export interface Elderly {
     birthYear: number;
     city: string;
     gender: Gender;
+    economy: string;
 };

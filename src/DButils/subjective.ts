@@ -16,6 +16,7 @@ export const insertSubjectiveAns = async (answers : any) => {
         insertDepression(elderlyNum,date,depressionVal);
 		insertLoneliness(elderlyNum,date,lonelinessVal);
 		insertSleeping(elderlyNum,date,sleepingVal);
+        insertLastUpdateDateSubjective(elderlyNum,date);
 
     }
     catch (e) {
@@ -86,3 +87,47 @@ export const insertSleeping = async (id:string ,date:Date, data: number) => {
         client.close()
     }
 }
+
+export const insertLastUpdateDateSubjective = async (elderlyNum: string, date: Date) => {
+    const client = new MongoClient(config.database.url);
+    try {
+      await client.connect();
+      const db = client.db(config.database.name);
+      const lastUpdate_collection = db.collection("LastUpdateDateSubjective");
+      const query = { elderlyNum: elderlyNum };
+      const existingDocument = await lastUpdate_collection.findOne(query);
+  
+      if (!existingDocument) {
+        const newDate = {
+          elderlyNum: elderlyNum,
+          date: date
+        };
+        await lastUpdate_collection.insertOne(newDate);
+      } else {
+        const update = { $set: { date: date } };
+        await lastUpdate_collection.updateOne(query, update);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTimeout(() => { client.close() }, 1500);
+    }
+  }
+  
+  export const getLastUpdateDate = async(elderlyNum : number) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const lastUpdate_collection = db.collection("LastUpdateDateSubjective");
+        const query = {
+            elderlyNum : elderlyNum,
+        }
+        const LastUpdateDateSubjective = await lastUpdate_collection.findOne(query);
+        return LastUpdateDateSubjective;
+    } catch (e) {
+        console.error(e);
+    } finally {
+        client.close()
+    }
+};

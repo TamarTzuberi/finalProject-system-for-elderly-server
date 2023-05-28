@@ -214,6 +214,7 @@ function calculateMean(values: number[]): number {
     feature: string,
     city: string,
     gender: string,
+    economy: string,
     startDate: Date,
     endDate: Date
   ) => {
@@ -223,7 +224,7 @@ function calculateMean(values: number[]): number {
       const db = client.db(config.database.name);
       let elderlyQuery;
       const elderliesCollection = db.collection("Elderlies");
-      if (city === "All" && gender === "All") {
+      if (city === "All" && gender === "All" && economy === "All") {
         const collection = db.collection(feature);
         
         const query = {
@@ -258,22 +259,55 @@ function calculateMean(values: number[]): number {
         return result;
       }
       else {
-        if (city === "All") {
+        if (city === "All" && economy === "All") {
+          console.log("in all city&economy");
           elderlyQuery = {
-            gender: gender 
+            gender: gender, 
             };
         } 
-        else if (gender === "All") {
-          console.log("in all gender");
+        else if (gender === "All" && city === "All") {
+          console.log("in all gender&city");
+
+          elderlyQuery = {
+            economy : economy
+            };
+        }
+        else if (gender === "All" && economy === "All") {
+          console.log("in all gender&economy");
 
           elderlyQuery = {
             city: city 
             };
         }
+        else if (city === "All") {
+          console.log("in all city");
+
+          elderlyQuery = {
+            gender: gender,
+            economy : economy 
+            };
+        }
+        else if (gender === "All") {
+          console.log("in all gender");
+
+          elderlyQuery = {
+            city: city,
+            economy : economy 
+            };
+        }
+        else if (economy === "All") {
+          console.log("in all economy");
+
+          elderlyQuery = {
+            city: city,
+            gender : gender 
+            };
+        }
          else {
           elderlyQuery = { 
             city: city,
-            gender: gender 
+            gender: gender,
+            economy: economy
           };
         }
         

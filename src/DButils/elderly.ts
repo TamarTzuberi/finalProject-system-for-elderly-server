@@ -12,6 +12,7 @@ const createElderlyCounter = () => {
       birthYear: number,
       city: string,
       gender: Gender,
+      economy: string,
       firstName: string,
       lastName: string
     ) => {
@@ -47,6 +48,7 @@ const createElderlyCounter = () => {
             birthYear,
             city,
             gender,
+            economy,
           });
           elderlyNum++; // Increment the static variable
           return { success: true, message: "User added to the DB" };
@@ -126,7 +128,7 @@ const createElderlyCounter = () => {
 //         }
 // }
 
-export const updateElderly = async (elderlyNum:number, birthYear:number, city:string, gender:Gender, firstName:string, lastName:string) => {
+export const updateElderly = async (elderlyNum:number, birthYear:number, city:string, gender:Gender, economy:string, firstName:string, lastName:string) => {
   console.log("in updateElderly");
   const client = new MongoClient(config.database.url);
   try {
@@ -135,7 +137,7 @@ export const updateElderly = async (elderlyNum:number, birthYear:number, city:st
     const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
     const query = { elderlyNum: elderlyNum };
 
-    const update = { $set: { birthYear: birthYear, city: city, gender: gender, firstName: firstName, lastName: lastName } };
+    const update = { $set: { birthYear: birthYear, city: city, gender: gender, economy: economy, firstName: firstName, lastName: lastName } };
     await elderlies.updateOne(query, update);
     return { success: true };
   } catch (e) {
