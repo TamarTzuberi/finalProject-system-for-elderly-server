@@ -19,10 +19,7 @@ router.post('/newSubjectiveAns', async (req, res, next) => {
 
   router.get('/lastSubjectiveDate/:elderlyNum', async (req, res, next) => {
     try {
-      const elderlyNum = parseInt(req.params.elderlyNum);
-      if (isNaN(elderlyNum)) {
-        throw new Error('Invalid elderlyNum');
-      }
+      const elderlyNum = req.params.elderlyNum;
       const LastUpdateDateSubjective = await subjectiveDB.getLastUpdateDate(elderlyNum);
       console.log("LastUpdateDateSubjective: ", LastUpdateDateSubjective);
       res.send((LastUpdateDateSubjective));

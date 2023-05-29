@@ -5,7 +5,7 @@ import { IntegerType, MongoClient } from "mongodb";
 import { Gender } from '../types/gender';
 const crypto = require('crypto');
 const createElderlyCounter = () => {
-    let elderlyNum: number | undefined = undefined;
+    let elderlyNum: string | undefined = undefined;
   
     return async (
       email: string,
@@ -32,9 +32,9 @@ const createElderlyCounter = () => {
         if (elderlyNum === undefined) {
           const lastElderly = await elderlies.findOne({}, { sort: { elderlyNum: -1 } });
           if (lastElderly) {
-            elderlyNum = lastElderly.elderlyNum + 1;
+            elderlyNum = String(Number(lastElderly.elderlyNum) + 1);
           } else {
-            elderlyNum = 1;
+            elderlyNum = "1";
           }
         }
   
@@ -50,7 +50,7 @@ const createElderlyCounter = () => {
             gender,
             economy,
           });
-          elderlyNum++; // Increment the static variable
+          elderlyNum = String(Number(elderlyNum) + 1); // Increment the static variable
           return { success: true, message: "User added to the DB" };
         }
       } catch (error) {
@@ -128,7 +128,7 @@ const createElderlyCounter = () => {
 //         }
 // }
 
-export const updateElderly = async (elderlyNum:number, birthYear:number, city:string, gender:Gender, economy:string, firstName:string, lastName:string) => {
+export const updateElderly = async (elderlyNum:string, birthYear:number, city:string, gender:Gender, economy:string) => {
   console.log("in updateElderly");
   const client = new MongoClient(config.database.url);
   try {
@@ -137,7 +137,7 @@ export const updateElderly = async (elderlyNum:number, birthYear:number, city:st
     const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
     const query = { elderlyNum: elderlyNum };
 
-    const update = { $set: { birthYear: birthYear, city: city, gender: gender, economy: economy, firstName: firstName, lastName: lastName } };
+    const update = { $set: { birthYear: birthYear, city: city, gender: gender, economy: economy } };
     await elderlies.updateOne(query, update);
     return { success: true };
   } catch (e) {

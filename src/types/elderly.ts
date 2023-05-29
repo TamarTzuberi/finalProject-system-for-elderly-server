@@ -1,7 +1,7 @@
 import { Gender } from './gender';
 
 export interface Elderly {
-    elderlyNum: number;
+    elderlyNum: string;
     hashEmail: string;
     birthYear: number;
     city: string;
