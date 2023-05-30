@@ -87,4 +87,16 @@ router.post('/login', async (req, res, next) => {
 	}
   });
 
+  router.get('/answerFirstQues/:elderlyNum', async (req, res, next) => {
+	try {
+		const elderlyNum = req.params.elderlyNum;
+		const ans = await elderly.getElderlyAns(elderlyNum);
+		console.log(ans);
+		res.send((ans));
+
+	} catch (error) {
+		next(error);
+	}
+});
+
 export default router;

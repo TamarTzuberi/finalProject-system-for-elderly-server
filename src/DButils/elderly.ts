@@ -203,3 +203,30 @@ function convertToHashId(id : string) {
     console.log("hash is",hashVal);
     return hashVal;
   }
+
+  export const getElderlyAns = async(elderlyNum : string) => {
+    const client = new MongoClient(config.database.url)
+    try {
+        await client.connect()
+        const db = client.db(config.database.name);
+        const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
+        const query = {
+            elderlyNum : elderlyNum,
+        }
+        const elderlyUser = await elderlies.findOne(query);
+        if (elderlyUser) {
+          if (elderlyUser.city === null && elderlyUser.birthYear === null && elderlyUser.gender === null && elderlyUser.economy === null) {
+            return { success: false, message: "Elderly didn't answer the first questionniare" };
+          } else {
+            return { success: true, message: "elderly already answered the first questionniare" };
+          }
+        }
+        else{
+          console.log("Elderly doesnt exist in DB");
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        client.close()
+    }
+};
