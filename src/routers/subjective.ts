@@ -8,8 +8,7 @@ const router = express.Router();
 router.post('/newSubjectiveAns', async (req, res, next) => {
     try {
       const { answers } = req.body;
-      const insertSub = await subjectiveDB.insertSubjectiveAns(answers);
-      console.log("insertSubjective: ", insertSub);
+      await subjectiveDB.insertSubjectiveAns(answers);
       res.status(200).send({ success: true });
     } catch (error) {
       res.status(400).send({ success: false });
