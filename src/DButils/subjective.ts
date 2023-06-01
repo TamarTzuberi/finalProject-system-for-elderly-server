@@ -6,7 +6,7 @@ import { config } from "./config";
 export const insertSubjectiveAns = async (answers : any) => {
 	try{
         console.log("insertSubjectiveAns");
-        const elderlyNum = answers.elderlyNum;
+        const elderlyNum = String(answers.elderlyNum);
         const date = answers.date;
         const depressionVal = answers.subjective.depression;
         const lonelinessVal = answers.subjective.loneliness;
@@ -30,7 +30,7 @@ export const insertPhysicalCondition = async (id:string ,date:Date, data: number
         await client.connect()
         const db = client.db(config.database.name);
         const physicalCondition_collection = db.collection("PhysicalCondition"); 
-        await physicalCondition_collection.insertOne({elderlyNum:id, date: date, val: data});
+        await physicalCondition_collection.insertOne({elderlyNum:id, date: new Date(date), val: data});
 
     } catch (e) {
         console.log("failed to insert PhysicalCondition");
@@ -46,7 +46,7 @@ export const insertDepression = async (id:string ,date:Date, data: number) => {
         await client.connect()
         const db = client.db(config.database.name);
         const depression_collection = db.collection("Depression");
-        await depression_collection.insertOne({elderlyNum:id, date: date, val: data});
+        await depression_collection.insertOne({elderlyNum:id, date: new Date(date), val: data});
 
     } catch (e) {
         console.log("failed to insert Depression");
@@ -62,7 +62,7 @@ export const insertLoneliness = async (id:string ,date:Date, data: number) => {
         await client.connect()
         const db = client.db(config.database.name);
         const Loneliness_collection = db.collection("Loneliness");
-        await Loneliness_collection.insertOne({elderlyNum:id, date: date, val: data});
+        await Loneliness_collection.insertOne({elderlyNum:id, date: new Date(date), val: data});
 
     } catch (e) {
         console.log("failed to insert Loneliness");
@@ -78,7 +78,7 @@ export const insertSleeping = async (id:string ,date:Date, data: number) => {
         await client.connect()
         const db = client.db(config.database.name);
         const Sleeping_collection = db.collection("Sleeping");
-        await Sleeping_collection.insertOne({elderlyNum:id, date: date, val: data});
+        await Sleeping_collection.insertOne({elderlyNum:id, date: new Date(date), val: data});
 
     } catch (e) {
         console.log("failed to insert Sleeping");
@@ -100,7 +100,7 @@ export const insertLastUpdateDateSubjective = async (elderlyNum: string, date: D
       if (!existingDocument) {
         const newDate = {
           elderlyNum: elderlyNum,
-          date: date
+          date: new Date(date).toISOString()
         };
         await lastUpdate_collection.insertOne(newDate);
       } else {
@@ -114,7 +114,7 @@ export const insertLastUpdateDateSubjective = async (elderlyNum: string, date: D
     }
   }
   
-  export const getLastUpdateDate = async(elderlyNum : number) => {
+  export const getLastUpdateDate = async(elderlyNum : string) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()

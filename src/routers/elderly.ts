@@ -74,7 +74,7 @@ router.post('/login', async (req, res, next) => {
   router.post('/updateElderly', async (req, res, next) => {
 	try {
 	  console.log("in update elderly");
-	  const updateUser = await elderly.updateElderly(req.body.elderlyNum, req.body.birthYear,req.body.city,req.body.gender,req.body.economy,req.body.firstName,req.body.lastName);
+	  const updateUser = await elderly.updateElderly(req.body.elderlyNum, req.body.birthYear,req.body.city,req.body.gender,req.body.economy);
 	  if (updateUser.success) {
 		res.status(200).send(updateUser);
 		return;
@@ -85,6 +85,18 @@ router.post('/login', async (req, res, next) => {
 	  console.log(error);
 	  res.status(401).send({success: false ,message: 'Update user failed',});
 	}
-  });
+  })
+
+  router.get('/answerFirstQues/:elderlyNum', async (req, res, next) => {
+	try {
+		const elderlyNum = req.params.elderlyNum;
+		const ans = await elderly.getElderlyAns(elderlyNum);
+		console.log(ans);
+		res.send((ans));
+
+	} catch (error) {
+		next(error);
+	}
+});
 
 export default router;
