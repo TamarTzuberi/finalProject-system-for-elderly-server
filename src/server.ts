@@ -13,7 +13,8 @@ import researcher from './routers/researcher';
 import bodyParser from "body-parser";
 import subjective from './routers/subjective';
 import elderly from './routers/elderly';
-const bcrypt = require('bcrypt');
+import {insertElderly} from './DButils/elderly'
+import { Gender } from "./types/gender";
 var path = require("path");
 var https = require('https');
 var fs = require('fs');
@@ -66,6 +67,9 @@ app.use("/elderly", elderly);
 app.use("/users", user);
 app.use("/questionnaires", questionnairesR);
 app.use("/subjective", subjective);
+
+
+insertElderly("elderytest@gmail.com",1950,"Tel Aviv",Gender.Female,"less","first","last");
 
 
 // var port = '443';
