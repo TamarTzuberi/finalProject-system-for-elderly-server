@@ -1,4 +1,6 @@
 import express from "express";
+import { off } from "process";
+import { insertActive, insertSteps } from "../DButils/band";
 const url = require('url');
 const axios = require('axios');
 const urlParse = require('url-parse');
@@ -7,11 +9,54 @@ const request = require('request');
 const router = express.Router();
 const querystring = require('node:querystring');
 const {google} = require("googleapis")
+const {getLastUpdateDateBand} = require('../DButils/band');
+const {insertLastUpdateDateBand , insertHR} = require('../DButils/band');
 
 interface DataObject {
     [date: string]: number;
   }
 export const updateHeartRate = async (req, res) => {
+    try{
+        const elderlyNum = req.body.elderlyNum;
+    let LastUpdateDateBand = await getLastUpdateDateBand("HR");
+    let startDate;
+    let endDateInDate = new Date();
+    endDateInDate.setDate(new Date().getDate()-1);
+    endDateInDate.setHours(23,59,59,999);
+    const offset = 10800000;
+    endDateInDate = new Date(Date.UTC(
+        endDateInDate.getUTCFullYear(),
+        endDateInDate.getUTCMonth(),
+        endDateInDate.getUTCDate(),
+        0, 0, 0, 0));
+    let endDate = endDateInDate.getTime();
+    console.log("endDate :",endDate);
+    let threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(new Date().getMonth() - 2);
+    threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
+    threeMonthsAgo.setHours(0);
+    threeMonthsAgo.setMinutes(0);
+    threeMonthsAgo.setSeconds(0);    
+    if(LastUpdateDateBand == undefined)
+    {
+        threeMonthsAgo = new Date(Date.UTC(
+            threeMonthsAgo.getUTCFullYear(),
+            threeMonthsAgo.getUTCMonth(),
+            threeMonthsAgo.getUTCDate(),
+            0, 0, 0, 0));
+        startDate = threeMonthsAgo.getTime();
+        console.log("startDate 2.5 m : ", startDate)
+    }
+    else{
+        
+        startDate = LastUpdateDateBand.date.getTime();
+        let differenceInMs = endDate - startDate;
+        let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
+        if (months > 2.5) {
+            startDate = threeMonthsAgo.getTime();
+        }
+        console.log("startDate from db :", startDate)
+    }
     const queryURL = new urlParse(req.url);
     const code = querystring.parse(queryURL.query).code;
 
@@ -23,8 +68,10 @@ export const updateHeartRate = async (req, res) => {
         //link to redirect to
         "http://localhost:3000/heart_rate"
     );
+
     const heartRateData: DataObject = {};
     try {
+        console.log("req.headers.accesstoken :",req.headers.accesstoken);
         const result = await axios({
             method: "POST",
             headers: {
@@ -41,8 +88,8 @@ export const updateHeartRate = async (req, res) => {
                 ],
 
                 bucketByTime: { durationMillis: 86400000 },
-                startTimeMillis:1672092000000,
-                endTimeMillis: 1673301600000,
+                startTimeMillis:startDate-offset,
+                endTimeMillis: endDate-offset,
             },
         });
         for (const dataSet of result.data.bucket) {
@@ -53,14 +100,65 @@ export const updateHeartRate = async (req, res) => {
               }
           }
       }
-      console.log(heartRateData);
-      res.status(200).send(heartRateData);
+      await insertHR(elderlyNum, heartRateData);
+    //   insertLastUpdateDateBand("HR", new Date(endDate));
+      console.log("heartRateData ",heartRateData);
+    //   res.status(200).send(heartRateData);
     } catch (e) {
         console.log(e);
     }
+}
+    
+    catch(error){
+        console.log(error);
+
+    }
 };
+    
 
 export const updateSteps = async (req,res) => {
+    try{
+
+    const elderlyNum = req.body.elderlyNum;
+    let LastUpdateDateBand = await getLastUpdateDateBand("Steps");
+    let startDate;
+    let endDateInDate = new Date();
+    endDateInDate.setDate(new Date().getDate()-1);
+    endDateInDate.setHours(23,59,59,999);
+    const offset = 10800000;
+    endDateInDate = new Date(Date.UTC(
+        endDateInDate.getUTCFullYear(),
+        endDateInDate.getUTCMonth(),
+        endDateInDate.getUTCDate(),
+        0, 0, 0, 0));
+    let endDate = endDateInDate.getTime();
+    console.log("endDate :",endDate);
+    let threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(new Date().getMonth() - 2);
+    threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
+    threeMonthsAgo.setHours(0);
+    threeMonthsAgo.setMinutes(0);
+    threeMonthsAgo.setSeconds(0);    
+    if(LastUpdateDateBand == undefined)
+    {
+        threeMonthsAgo = new Date(Date.UTC(
+            threeMonthsAgo.getUTCFullYear(),
+            threeMonthsAgo.getUTCMonth(),
+            threeMonthsAgo.getUTCDate(),
+            0, 0, 0, 0));
+        startDate = threeMonthsAgo.getTime();
+        console.log("startDate 2.5 m : ", startDate)
+    }
+    else{
+        
+        startDate = LastUpdateDateBand.date.getTime();
+        let differenceInMs = endDate - startDate;
+        let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
+        if (months > 2.5) {
+            startDate = threeMonthsAgo.getTime();
+        }
+        console.log("startDate from db :", startDate)
+    }
     const queryURL = new urlParse(req.url);
     const code = querystring.parse(queryURL.query).code;
     const oauth2Client = new google.auth.OAuth2(
@@ -91,8 +189,8 @@ export const updateSteps = async (req,res) => {
                         },
                     ],
                     bucketByTime: { durationMillis : 86400000},
-                    startTimeMillis:1672092000000,
-                    endTimeMillis: 1673301600000,
+                    startTimeMillis:startDate - offset,
+                    endTimeMillis: endDate - offset,
   
                 },
             }
@@ -105,15 +203,63 @@ export const updateSteps = async (req,res) => {
             }
           }
         }
-        console.log(stepData);
-        res.status(200).send(stepData);
+        insertSteps(elderlyNum, stepData);
+        // insertLastUpdateDateBand("HR", new Date(endDate));
+        console.log("steps data :",stepData);
+        // res.status(200).send(stepData);
     }
     catch(e){
         console.log(e);
     }
+}
+catch(e){
+    console.log(e);
+}
   };
 
+
   export const updateActiveMintues = async (req,res) => {
+    try{
+    const elderlyNum = req.body.elderlyNum;
+    let LastUpdateDateBand = await getLastUpdateDateBand("ActiveMintues");
+    let startDate;
+    let endDateInDate = new Date();
+    endDateInDate.setDate(new Date().getDate()-1);
+    endDateInDate.setHours(23,59,59,999);
+    const offset = 10800000;
+    endDateInDate = new Date(Date.UTC(
+        endDateInDate.getUTCFullYear(),
+        endDateInDate.getUTCMonth(),
+        endDateInDate.getUTCDate(),
+        0, 0, 0, 0));
+    let endDate = endDateInDate.getTime();
+    console.log("endDate :",endDate);
+    let threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(new Date().getMonth() - 2);
+    threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
+    threeMonthsAgo.setHours(0);
+    threeMonthsAgo.setMinutes(0);
+    threeMonthsAgo.setSeconds(0);    
+    if(LastUpdateDateBand == undefined)
+    {
+        threeMonthsAgo = new Date(Date.UTC(
+            threeMonthsAgo.getUTCFullYear(),
+            threeMonthsAgo.getUTCMonth(),
+            threeMonthsAgo.getUTCDate(),
+            0, 0, 0, 0));
+        startDate = threeMonthsAgo.getTime();
+        console.log("startDate 2.5 m : ", startDate)
+    }
+    else{
+        
+        startDate = LastUpdateDateBand.date.getTime();
+        let differenceInMs = endDate - startDate;
+        let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
+        if (months > 2.5) {
+            startDate = threeMonthsAgo.getTime();
+        }
+        console.log("startDate from db :", startDate)
+    }
     const queryURL = new urlParse(req.url);
     const code = querystring.parse(queryURL.query).code;
     const oauth2Client = new google.auth.OAuth2(
@@ -143,8 +289,8 @@ export const updateSteps = async (req,res) => {
                         },
                     ],
                     bucketByTime: { durationMillis : 86400000},
-                    startTimeMillis:1672092000000,
-                    endTimeMillis: 1673301600000,
+                    startTimeMillis:startDate-offset,
+                    endTimeMillis: endDate-offset,
   
                 },
             }
@@ -157,115 +303,16 @@ export const updateSteps = async (req,res) => {
             }
           }
         }
-        console.log(activeMinutesData);
-        res.status(200).send(activeMinutesData);
+        insertActive(elderlyNum, activeMinutesData);
+
+        console.log("activeMinutesData",activeMinutesData);
+        // res.status(200).send(activeMinutesData);
     }
     catch(e){
         console.log(e);
     }
-  };
-
-  export const updateDistance =async (req,res) => {
-    const queryURL = new urlParse(req.url);
-    const code = querystring.parse(queryURL.query).code;
-    const oauth2Client = new google.auth.OAuth2(
-        //client id
-        "59463143891-j5k7c9loabghrkdbacb92gpprfrkheed.apps.googleusercontent.com",
-        //secret
-        "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",
-        //link to redirect to
-        "http://localhost:3000/distance"
-        );
-    const distancesData: DataObject = {};
-  
-    try{
-        const result = await axios(
-            {
-                method: "POST",
-                headers: {
-                authorization: "Bearer " + req.headers.accesstoken,
-                },
-                "Content-Type": "application/json",
-  
-                url: 'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',
-                data: {
-                    aggregateBy:[
-                        {
-                            dataTypeName:"com.google.distance.delta",
-                        },
-                    ],
-                    bucketByTime: { durationMillis : 86400000},
-                    startTimeMillis:1672092000000,
-                    endTimeMillis: 1673301600000,
-  
-                },
-            }
-        );
-        for (const dataSet of result.data.bucket) {
-          for (const points of dataSet.dataset) {
-            for (const distance of points.point) {
-              const date = new Date(distance.startTimeNanos / 1000000).toISOString().slice(0, 10);
-              distancesData[date] = distance.value;
-            }
-          }
-        }
-        console.log(distancesData);
-        res.status(200).send(distancesData);
-    }
-    catch(e){
-        console.log(e);
-    }
-  };
-
-  export const updateSpeed =async (req,res) => {
-    const queryURL = new urlParse(req.url);
-    const code = querystring.parse(queryURL.query).code;
-    const oauth2Client = new google.auth.OAuth2(
-        //client id
-        "59463143891-j5k7c9loabghrkdbacb92gpprfrkheed.apps.googleusercontent.com",
-        //secret
-        "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",
-        //link to redirect to
-        "http://localhost:3000/speed"
-        );
-
-        const speedData: DataObject = {};
-  
-    try{
-        const result = await axios(
-            {
-                method: "POST",
-                headers: {
-                authorization: "Bearer " + req.headers.accesstoken,
-                },
-                "Content-Type": "application/json",
-  
-                url: 'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',
-                data: {
-                    aggregateBy:[
-                        {
-                            dataTypeName:"com.google.speed",
-                        },
-                    ],
-                    bucketByTime: { durationMillis : 86400000},
-                    startTimeMillis:1672092000000,
-                    endTimeMillis: 1673301600000,
-  
-                },
-            }
-        );
-        for (const dataSet of result.data.bucket) {
-          for (const points of dataSet.dataset) {
-            for (const speed of points.point) {
-              const date = new Date(speed.startTimeNanos / 1000000).toISOString().slice(0, 10);
-              speedData[date] = speed.value;
-            }
-          }
-        }
-        console.log(speedData);
-        res.status(200).send(speedData);
-    }
-    catch(e){
-        console.log(e);
-    }
+}
+catch(e){
+    console.log(e);
+}
   };

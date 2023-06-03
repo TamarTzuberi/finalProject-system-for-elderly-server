@@ -14,6 +14,8 @@ import bodyParser from "body-parser";
 import subjective from './routers/subjective';
 import elderly from './routers/elderly';
 import {insertElderly} from './DButils/elderly'
+import {updateHeartRate} from './handlers/healthHandlers'
+
 import { Gender } from "./types/gender";
 var path = require("path");
 var https = require('https');
@@ -69,8 +71,9 @@ app.use("/questionnaires", questionnairesR);
 app.use("/subjective", subjective);
 
 
-insertElderly("elderytest@gmail.com",1950,"Tel Aviv",Gender.Female,"less","first","last");
+//insertElderly("elderytest@gmail.com",1950,"Tel Aviv",Gender.Female,"less","first","last");
 
+// updateHeartRate("","");
 
 // var port = '443';
 // var host = "elderyresearch.cs.bgu.ac.il"

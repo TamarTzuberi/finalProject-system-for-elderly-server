@@ -100,10 +100,10 @@ export const insertSteps = async (id:string , data: Array<{ [key: string]: Array
         await client.connect()
         const db = client.db(config.database.name);
         const Steps_collection = db.collection("Steps");
-        for (const [key, value] of Object.entries(data[0])) {
-            console.log(key);
-            console.log(value[0]);
-            await Steps_collection.insertOne({elderlyNum:id,date: new Date(key), val: value[0].intVal});
+        for (const [key, value] of Object.entries(data)) {
+            let date = new Date(key);
+            date.setDate(date.getDate()+1); 
+            await Steps_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
     } catch (e) {
@@ -119,12 +119,8 @@ export const insertActive = async (id:string , data: Array<{ [key: string]: Arra
         await client.connect()
         const db = client.db(config.database.name);
         const Active_collection = db.collection("ActiveMinutes");
-        for (const [key, value] of Object.entries(data[0])) {
-            console.log("before change",key);
+        for (const [key, value] of Object.entries(data)) {
             let date = new Date(key);
-            // console.log("before change in date format",key);
-            // date.setDate(date.getDate() - 1);
-            // console.log("after change",date);
             await Active_collection.insertOne({elderlyNum:id,date: date, val: value[0].intVal});
         }
 
@@ -140,10 +136,12 @@ export const insertActive = async (id:string , data: Array<{ [key: string]: Arra
 export const insertHR = async (id:string , data: Array<{ [key: string]: Array<{ fpVal: number, mapVal: any[] }> }>) => {
     const client = new MongoClient(config.database.url)
     try {
+      console.log("Date in insert :",data)
         await client.connect()
         const db = client.db(config.database.name);
         const HR_collection = db.collection("HR");
-        for (const [key, value] of Object.entries(data[0])) {
+        console.log("Object.entries(data[0]) ",Object.entries(data));
+        for (const [key, value] of Object.entries(data)) {
             await HR_collection.insertOne({elderlyNum:id,date: new Date(key), val: value[0].fpVal});
         }
     } catch (e) {

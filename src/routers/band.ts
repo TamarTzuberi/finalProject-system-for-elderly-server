@@ -14,13 +14,15 @@ const {updateSpeed} = require('../handlers/healthHandlers');
 const {updateSteps} = require('../handlers/healthHandlers');
 
 
+function sleep(ms: number | undefined) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 router.post('/api/cookies', async (req, res) => {
-  updateHeartRate(req, res);
-  updateSteps(req,res);
-  updateActiveMintues(req,res);
-  updateDistance(req,res);
-  updateSpeed(req,res);
+  await updateHeartRate(req, res);
+  await updateSteps(req,res);
+  await updateActiveMintues(req,res);
+
 });
 
 export default router;

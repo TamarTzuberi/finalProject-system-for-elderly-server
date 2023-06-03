@@ -18,7 +18,7 @@ const createElderlyCounter = () => {
       lastName: string
     ) => {
       const uri = 'mongodb://admin:adminpassword@localhost:27017/AdminsOfElderlySystem';
-      const clientAdmin = new MongoClient(uri);
+      //const clientAdmin = new MongoClient(uri);
       const client = new MongoClient(config.database.url);
       try {
         console.log("the email ", email);
@@ -43,25 +43,25 @@ const createElderlyCounter = () => {
           return { success: false, message: "Already exists" };
         } else {
           console.log("in else");
-          await clientAdmin.connect();
-          console.log("after clientAdmin.connect");
-        const adminDB =  clientAdmin.db(config.adminDatabase.name);
-        console.log("connected to adminDB");
-        const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
-        const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
+        //   await clientAdmin.connect();
+        //   console.log("after clientAdmin.connect");
+        // const adminDB =  clientAdmin.db(config.adminDatabase.name);
+        // console.log("connected to adminDB");
+        // const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
+        // const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
 
-        if(existingUserInAdminDB == undefined)
-        {
-            await usersCollection.insertOne({
-                email,
-                elderlyNum,
-                firstName,
-                lastName ,
-            });
-        }
-        else{
-            console.log("Username with this userName already exists in the adminDB")
-        }
+        // if(existingUserInAdminDB == undefined)
+        // {
+        //     await usersCollection.insertOne({
+        //         email,
+        //         elderlyNum,
+        //         firstName,
+        //         lastName ,
+        //     });
+        // }
+        // else{
+        //     console.log("Username with this userName already exists in the adminDB")
+        // }
           await elderlies.insertOne({
             elderlyNum,
             hashEmail,
@@ -80,7 +80,7 @@ const createElderlyCounter = () => {
         console.error("in catch", error);
       } finally {
         client.close();
-        clientAdmin.close();
+        // clientAdmin.close();
       }
     }
   }
