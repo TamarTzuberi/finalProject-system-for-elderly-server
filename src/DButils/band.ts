@@ -46,14 +46,14 @@ import { config } from './config';
 //     }
 // }
 
-export const getLastUpdateDateBand = async (feature : string ) => {
+export const getLastUpdateDateBand = async (elderlyNum:number, feature : string ) => {
     const client = new MongoClient(config.database.url)
     try {
         await client.connect()
         const db = client.db(config.database.name);
         const lastUpdate_collection = db.collection("LastUpdateDateBand");
         const query = {
-            _id : feature,
+            _id : {elderlyNum : elderlyNum, feature:feature },
         }
         const LastUpdateDateBand = await lastUpdate_collection.findOne(query);
         console.log("LastUpdateDateBand ",LastUpdateDateBand);
@@ -67,18 +67,18 @@ export const getLastUpdateDateBand = async (feature : string ) => {
 
 import { MongoClient } from 'mongodb';
 
-export const insertLastUpdateDateBand = async (feature: string, date: Date) => {
+export const insertLastUpdateDateBand = async (feature: string,elderlyNum:number, date: Date) => {
   const client = new MongoClient(config.database.url);
   try {
     await client.connect();
     const db = client.db(config.database.name);
     const lastUpdate_collection = db.collection("LastUpdateDateBand");
-    const query = { _id: feature };
+    const query = { _id: {elderlyNum, feature }};
     const existingDocument = await lastUpdate_collection.findOne(query);
 
     if (!existingDocument) {
       const newDate = {
-        _id: feature,
+        _id: {elderlyNum, feature },
         date: date
       };
       await lastUpdate_collection.insertOne(newDate);

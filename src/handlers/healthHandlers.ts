@@ -18,7 +18,7 @@ interface DataObject {
 export const updateHeartRate = async (req, res) => {
     try{
         const elderlyNum = req.body.elderlyNum;
-    let LastUpdateDateBand = await getLastUpdateDateBand("HR");
+    let LastUpdateDateBand = await getLastUpdateDateBand(elderlyNum,"HR");
     let startDate;
     let endDateInDate = new Date();
     endDateInDate.setDate(new Date().getDate()-1);
@@ -30,7 +30,6 @@ export const updateHeartRate = async (req, res) => {
         endDateInDate.getUTCDate(),
         0, 0, 0, 0));
     let endDate = endDateInDate.getTime();
-    console.log("endDate :",endDate);
     let threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(new Date().getMonth() - 2);
     threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
@@ -45,11 +44,23 @@ export const updateHeartRate = async (req, res) => {
             threeMonthsAgo.getUTCDate(),
             0, 0, 0, 0));
         startDate = threeMonthsAgo.getTime();
-        console.log("startDate 2.5 m : ", startDate)
     }
     else{
         
-        startDate = LastUpdateDateBand.date.getTime();
+        startDate = LastUpdateDateBand.date;
+        startDate = new Date(Date.UTC(
+            startDate.getUTCFullYear(),
+            startDate.getUTCMonth(),
+            startDate.getUTCDate(),
+            0, 0, 0, 0));
+       
+
+        if (startDate.getDate() == endDateInDate.getDate() )
+        {
+            console.log("already update the data until yesterday HR");
+            return;
+        }
+        startDate = startDate.getTime();
         let differenceInMs = endDate - startDate;
         let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
         if (months > 2.5) {
@@ -101,9 +112,8 @@ export const updateHeartRate = async (req, res) => {
           }
       }
       await insertHR(elderlyNum, heartRateData);
-    //   insertLastUpdateDateBand("HR", new Date(endDate));
+      insertLastUpdateDateBand("HR", elderlyNum, new Date(endDate));
       console.log("heartRateData ",heartRateData);
-    //   res.status(200).send(heartRateData);
     } catch (e) {
         console.log(e);
     }
@@ -120,7 +130,7 @@ export const updateSteps = async (req,res) => {
     try{
 
     const elderlyNum = req.body.elderlyNum;
-    let LastUpdateDateBand = await getLastUpdateDateBand("Steps");
+    let LastUpdateDateBand = await getLastUpdateDateBand(elderlyNum,"Steps");
     let startDate;
     let endDateInDate = new Date();
     endDateInDate.setDate(new Date().getDate()-1);
@@ -132,7 +142,6 @@ export const updateSteps = async (req,res) => {
         endDateInDate.getUTCDate(),
         0, 0, 0, 0));
     let endDate = endDateInDate.getTime();
-    console.log("endDate :",endDate);
     let threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(new Date().getMonth() - 2);
     threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
@@ -147,17 +156,29 @@ export const updateSteps = async (req,res) => {
             threeMonthsAgo.getUTCDate(),
             0, 0, 0, 0));
         startDate = threeMonthsAgo.getTime();
-        console.log("startDate 2.5 m : ", startDate)
     }
     else{
         
-        startDate = LastUpdateDateBand.date.getTime();
+        startDate = LastUpdateDateBand.date;
+        startDate = new Date(Date.UTC(
+            startDate.getUTCFullYear(),
+            startDate.getUTCMonth(),
+            startDate.getUTCDate(),
+            0, 0, 0, 0));
+
+
+        if (startDate.getDate() == endDateInDate.getDate() )
+        {
+            console.log("already update the data until yesterday STEPS");
+            return;
+        }
+        startDate = startDate.getTime();
+
         let differenceInMs = endDate - startDate;
         let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
         if (months > 2.5) {
             startDate = threeMonthsAgo.getTime();
         }
-        console.log("startDate from db :", startDate)
     }
     const queryURL = new urlParse(req.url);
     const code = querystring.parse(queryURL.query).code;
@@ -204,9 +225,8 @@ export const updateSteps = async (req,res) => {
           }
         }
         insertSteps(elderlyNum, stepData);
-        // insertLastUpdateDateBand("HR", new Date(endDate));
+        insertLastUpdateDateBand("Steps",elderlyNum, new Date(endDate));
         console.log("steps data :",stepData);
-        // res.status(200).send(stepData);
     }
     catch(e){
         console.log(e);
@@ -221,7 +241,7 @@ catch(e){
   export const updateActiveMintues = async (req,res) => {
     try{
     const elderlyNum = req.body.elderlyNum;
-    let LastUpdateDateBand = await getLastUpdateDateBand("ActiveMintues");
+    let LastUpdateDateBand = await getLastUpdateDateBand(elderlyNum,"ActiveMinutes");
     let startDate;
     let endDateInDate = new Date();
     endDateInDate.setDate(new Date().getDate()-1);
@@ -233,7 +253,6 @@ catch(e){
         endDateInDate.getUTCDate(),
         0, 0, 0, 0));
     let endDate = endDateInDate.getTime();
-    console.log("endDate :",endDate);
     let threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(new Date().getMonth() - 2);
     threeMonthsAgo.setDate(threeMonthsAgo.getDate() -15);
@@ -248,17 +267,28 @@ catch(e){
             threeMonthsAgo.getUTCDate(),
             0, 0, 0, 0));
         startDate = threeMonthsAgo.getTime();
-        console.log("startDate 2.5 m : ", startDate)
     }
     else{
+        startDate = LastUpdateDateBand.date;
+        startDate = new Date(Date.UTC(
+            startDate.getUTCFullYear(),
+            startDate.getUTCMonth(),
+            startDate.getUTCDate(),
+            0, 0, 0, 0));
         
-        startDate = LastUpdateDateBand.date.getTime();
+
+        if (startDate.getDate() == endDateInDate.getDate() )
+        {
+            console.log("already update the data until yesterday ActiveMinutes");
+            return;
+        }
+        startDate = startDate.getTime();
+
         let differenceInMs = endDate - startDate;
         let months = differenceInMs / (1000 * 60 * 60 * 24 * 30.4375);
         if (months > 2.5) {
             startDate = threeMonthsAgo.getTime();
         }
-        console.log("startDate from db :", startDate)
     }
     const queryURL = new urlParse(req.url);
     const code = querystring.parse(queryURL.query).code;
@@ -304,9 +334,9 @@ catch(e){
           }
         }
         insertActive(elderlyNum, activeMinutesData);
+        insertLastUpdateDateBand("ActiveMinutes", elderlyNum, new Date(endDate));
 
         console.log("activeMinutesData",activeMinutesData);
-        // res.status(200).send(activeMinutesData);
     }
     catch(e){
         console.log(e);
