@@ -6,5 +6,8 @@ export interface Elderly {
     birthYear: number;
     city: string;
     gender: Gender;
-    economy: string;
+    economicState: string;
+    familyStatus: string;
+    longTermIllness: string;
+    disability: string;
 };

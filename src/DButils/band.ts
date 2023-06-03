@@ -212,7 +212,7 @@ function calculateMean(values: number[]): number {
     feature: string,
     city: string,
     gender: string,
-    economy: string,
+    economicState: string,
     startDate: Date,
     endDate: Date
   ) => {
@@ -222,7 +222,7 @@ function calculateMean(values: number[]): number {
       const db = client.db(config.database.name);
       let elderlyQuery;
       const elderliesCollection = db.collection("Elderlies");
-      if (city === "All" && gender === "All" && economy === "All") {
+      if (city === "All" && gender === "All" && economicState === "All") {
         const collection = db.collection(feature);
         
         const query = {
@@ -257,7 +257,7 @@ function calculateMean(values: number[]): number {
         return result;
       }
       else {
-        if (city === "All" && economy === "All") {
+        if (city === "All" && economicState === "All") {
           console.log("in all city&economy");
           elderlyQuery = {
             gender: gender, 
@@ -267,10 +267,10 @@ function calculateMean(values: number[]): number {
           console.log("in all gender&city");
 
           elderlyQuery = {
-            economy : economy
+            economicState : economicState
             };
         }
-        else if (gender === "All" && economy === "All") {
+        else if (gender === "All" && economicState === "All") {
           console.log("in all gender&economy");
 
           elderlyQuery = {
@@ -282,7 +282,7 @@ function calculateMean(values: number[]): number {
 
           elderlyQuery = {
             gender: gender,
-            economy : economy 
+            economicState : economicState 
             };
         }
         else if (gender === "All") {
@@ -290,10 +290,10 @@ function calculateMean(values: number[]): number {
 
           elderlyQuery = {
             city: city,
-            economy : economy 
+            economicState : economicState 
             };
         }
-        else if (economy === "All") {
+        else if (economicState === "All") {
           console.log("in all economy");
 
           elderlyQuery = {
@@ -305,7 +305,7 @@ function calculateMean(values: number[]): number {
           elderlyQuery = { 
             city: city,
             gender: gender,
-            economy: economy
+            economicState: economicState
           };
         }
         

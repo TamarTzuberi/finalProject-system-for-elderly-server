@@ -13,9 +13,10 @@ const createElderlyCounter = () => {
       birthYear: number,
       city: string,
       gender: Gender,
-      economy: string,
-      firstName: string,
-      lastName: string
+      economicState: string,
+      familyStatus: string,
+      longTermIllness: string,
+      disability: string,
     ) => {
       const uri = 'mongodb://admin:adminpassword@localhost:27017/AdminsOfElderlySystem';
       //const clientAdmin = new MongoClient(uri);
@@ -68,7 +69,10 @@ const createElderlyCounter = () => {
             birthYear,
             city,
             gender,
-            economy,
+            economicState,
+            familyStatus,
+            longTermIllness,
+            disability,
           });
           elderlyNum = String(Number(elderlyNum) + 1); // Increment the static variable
           return { success: true, message: "User added to the DB" };
@@ -89,7 +93,15 @@ const createElderlyCounter = () => {
 
 
 
-export const updateElderly = async (elderlyNum:string, birthYear:number, city:string, gender:Gender, economy:string) => {
+export const updateElderly = async (answers: any) => {
+  const elderlyNum = answers.elderlyNum;
+  const birthYear = answers.personalDetails.birthYear;
+  const city = answers.personalDetails.city;
+  const gender = answers.personalDetails.gender;
+  const economicState = answers.personalDetails.economicState;
+  const familyStatus = answers.personalDetails.familyStatus;
+  const longTermIllness = answers.personalDetails.longTermIllness;
+  const disability = answers.personalDetails.disability;
   console.log("in updateElderly");
   const client = new MongoClient(config.database.url);
   try {
@@ -98,7 +110,7 @@ export const updateElderly = async (elderlyNum:string, birthYear:number, city:st
     const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
     const query = { elderlyNum: elderlyNum };
 
-    const update = { $set: { birthYear: birthYear, city: city, gender: gender, economy: economy } };
+    const update = { $set: { birthYear: birthYear, city: city, gender: gender, economicState: economicState , familyStatus:familyStatus, longTermIllness:longTermIllness, disability:disability} };
     await elderlies.updateOne(query, update);
     return { success: true };
   } catch (e) {
@@ -176,7 +188,7 @@ function convertToHashId(id : string) {
         }
         const elderlyUser = await elderlies.findOne(query);
         if (elderlyUser) {
-          if (elderlyUser.city === null && elderlyUser.birthYear === null && elderlyUser.gender === null && elderlyUser.economy === null) {
+          if (elderlyUser.city === null && elderlyUser.birthYear === null && elderlyUser.gender === null && elderlyUser.economicState === null) {
             return { success: false, message: "Elderly didn't answer the first questionniare" };
           } else {
             return { success: true, message: "elderly already answered the first questionniare" };

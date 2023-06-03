@@ -19,10 +19,10 @@ router.get('/features/steps/:elderlyId/:startDate/:endDate', async(req,res,next)
 });
 
 
-router.get('/features/:feature/:city/:gender/:economy/:startDate/:endDate', async(req,res,next)=>{
+router.get('/features/:feature/:city/:gender/:economicState/:startDate/:endDate', async(req,res,next)=>{
     try{
-        const {feature,city,gender,economy,startDate, endDate} = req.params;
-        const stepsInRequestedDays = await getFeatureInRequestedDaysCityGender(feature,city,gender,economy,new Date(startDate), new Date(endDate));
+        const {feature,city,gender,economicState,startDate, endDate} = req.params;
+        const stepsInRequestedDays = await getFeatureInRequestedDaysCityGender(feature,city,gender,economicState,new Date(startDate), new Date(endDate));
         console.log(stepsInRequestedDays);
         res.status(200).send(stepsInRequestedDays);
     }catch(e){

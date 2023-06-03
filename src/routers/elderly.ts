@@ -58,7 +58,7 @@ router.post('/login', async (req, res, next) => {
   router.post('/newElderly', async (req, res, next) => {
 	try {
 	  console.log("in insert elderly");
-	  const addingUser = await elderly.insertElderly(req.body.email,req.body.birthYear,req.body.city,req.body.gender,req.body.economy,req.body.firstName,req.body.lastName);
+	  const addingUser = await elderly.insertElderly(req.body.email,req.body.birthYear,req.body.city,req.body.gender,req.body.economicState, req.body.familyStatus, req.body.longTermIllness, req.body.disability);
 	  if (addingUser.success) {
 		res.status(200).send(addingUser);
 		return;
@@ -74,7 +74,8 @@ router.post('/login', async (req, res, next) => {
   router.post('/updateElderly', async (req, res, next) => {
 	try {
 	  console.log("in update elderly");
-	  const updateUser = await elderly.updateElderly(req.body.elderlyNum, req.body.birthYear,req.body.city,req.body.gender,req.body.economy);
+	  const { answers } = req.body;
+	  const updateUser = await elderly.updateElderly(answers)
 	  if (updateUser.success) {
 		res.status(200).send(updateUser);
 		return;
