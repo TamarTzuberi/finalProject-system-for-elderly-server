@@ -18,16 +18,16 @@ const createElderlyCounter = () => {
       longTermIllness: string,
       disability: string,
     ) => {
-      const uri = 'mongodb://admin:adminpassword@localhost:27017/AdminsOfElderlySystem';
-      //const clientAdmin = new MongoClient(uri);
+
+      const uri = 'mongodb://researcherUserAdmin:researcherPasswordAdmin@127.0.0.1:27017/adminDB';
+      const clientAdmin = new MongoClient(uri);
       const client = new MongoClient(config.database.url);
       try {
         console.log("the email ", email);
         const hashEmail = convertToHashId(email);
         console.log("hash email in insert", hashEmail);
-        
         await client.connect();
-        console.log("connect to regular");
+        console.log("connect to regular db");
         const db = client.db(config.database.name);
         const elderlies = db.collection<Elderly>(collectionIds.elderlyUsers);
         if (elderlyNum === undefined) {
@@ -43,26 +43,7 @@ const createElderlyCounter = () => {
           console.log("in existingElderly");
           return { success: false, message: "Already exists" };
         } else {
-          console.log("in else");
-        //   await clientAdmin.connect();
-        //   console.log("after clientAdmin.connect");
-        // const adminDB =  clientAdmin.db(config.adminDatabase.name);
-        // console.log("connected to adminDB");
-        // const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
-        // const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
-
-        // if(existingUserInAdminDB == undefined)
-        // {
-        //     await usersCollection.insertOne({
-        //         email,
-        //         elderlyNum,
-        //         firstName,
-        //         lastName ,
-        //     });
-        // }
-        // else{
-        //     console.log("Username with this userName already exists in the adminDB")
-        // }
+          console.log("there is no existingElderly");
           await elderlies.insertOne({
             elderlyNum,
             hashEmail,
@@ -74,18 +55,44 @@ const createElderlyCounter = () => {
             longTermIllness,
             disability,
           });
-          elderlyNum = String(Number(elderlyNum) + 1); // Increment the static variable
+          client.close();
+          try{
+              await clientAdmin.connect();
+              console.log("after clientAdmin.connect");
+              const adminDB =  clientAdmin.db(config.adminDatabase.name);
+              console.log("connected to adminDB");
+              const usersCollection = adminDB.collection<UsersConverter>(collectionIds.allUsersConverter);
+              const existingUserInAdminDB =await usersCollection.findOne({ email: email });	
+              console.log("existingUserInAdminDB :",existingUserInAdminDB);
+              if(existingUserInAdminDB == undefined)
+              {
+                  await usersCollection.insertOne({
+                      email,
+                      elderlyNum,
+                  });
+              }
+              else{
+                  console.log("Username with this email already exists in the adminDB")
+              }
+
+            clientAdmin.close();
+            elderlyNum = String(Number(elderlyNum) + 1); // Increment the static variable
+
+          }
+          catch(error){
+            console.error("in catch", error);
+            clientAdmin.close();
+            return { success: false, message: "catch" };
+          }
           return { success: true, message: "User added to the DB" };
         }
         
-  
       } catch (error) {
-        return { success: false, message: "catch" };
-        console.error("in catch", error);
-      } finally {
         client.close();
-        // clientAdmin.close();
+        console.error("in catch", error);
+        return { success: false, message: "catch" };
       }
+      
     }
   }
   
