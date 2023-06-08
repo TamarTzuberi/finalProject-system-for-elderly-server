@@ -12,11 +12,20 @@ router.post('/login', async (req, res, next) => {
 		console.log(username);
 		// check that username exists
 		const user = await userDB.getUserByUsername(username);
-		if (!user || !bcrypt.compareSync(password, user.password)) {
-			res.status(401).send(false);
+		if (user == null){
+			res.send({message: 'username does not exist' , success: false});
 			return;
 		}
-		res.status(200).send(true);
+		else{
+			if (!bcrypt.compareSync(password, user.password)){
+				res.send({message: 'wrong password' , success: false});
+				return;
+			}
+			else{
+				res.status(200).send({message: 'login succedded' , success: true});
+				return;
+			}
+		} 
 	}
 	catch (error) {
 		next(error);
@@ -91,5 +100,6 @@ router.put('/updatePassword', async (req, res, next) => {
 		res.status(401).send({message: "unauthorized", success: false});
 	}
 });
+
 
 export default router;

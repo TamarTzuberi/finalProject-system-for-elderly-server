@@ -7,6 +7,7 @@ import cors from "cors";
 import helmet from "helmet";
 import admin from './routers/admin';
 import band from './routers/band';
+import {insertUser} from './DButils/user';
 import user from './routers/user';
 import questionnairesR from './routers/questionnaires';
 import researcher from './routers/researcher';
@@ -70,6 +71,8 @@ app.use("/users", user);
 app.use("/questionnaires", questionnairesR);
 app.use("/subjective", subjective);
 
+
+// insertUser("admin1","admin");
 
 //insertElderly("elderytest@gmail.com",1950,"Tel Aviv",Gender.Female,"less","first","last");
 
