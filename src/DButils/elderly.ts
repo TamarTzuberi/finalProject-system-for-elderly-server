@@ -1,6 +1,8 @@
 import { config } from "./config";
 import { collectionIds } from '../constants/collectionsIds';
 import { Elderly } from "../types/elderly";
+import { FirstLogin } from "../types/firstLogin";
+
 import { IntegerType, MongoClient } from "mongodb";
 import { Gender } from '../types/gender';
 import { UsersConverter } from "../types/usersConverter";
@@ -210,3 +212,33 @@ function convertToHashId(id : string) {
         client.close()
     }
 };
+
+
+export const getFirstLogin = async(deviceToken : string) => {
+  const client = new MongoClient(config.database.url)
+  try {
+      await client.connect()
+      const db = client.db(config.database.name);
+      const firstLogin = db.collection<FirstLogin>("FirstLogin");
+      const query = {
+        deviceToken : deviceToken,
+      }
+      const elderlyUser = await firstLogin.findOne(query);
+      if (elderlyUser) {
+        console.log("in exist")
+        return true;
+      }
+      else{
+        await firstLogin.insertOne({
+          deviceToken,
+          firstLogin : true,
+        });
+        return false;      
+      }
+  } catch (e) {
+      console.error(e);
+  } finally {
+      client.close()
+  }
+};
+

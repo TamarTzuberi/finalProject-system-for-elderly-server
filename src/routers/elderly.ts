@@ -100,4 +100,17 @@ router.post('/login', async (req, res, next) => {
 	}
 });
 
+
+router.get('/firstLogin/:deviceToken', async (req, res, next) => {
+	try {
+		const deviceToken = req.params.deviceToken;
+		const ans = await elderly.getFirstLogin(deviceToken);
+		console.log("firstLogin",ans);
+		res.send(ans);
+
+	} catch (error) {
+		next(error);
+	}
+});
+
 export default router;
