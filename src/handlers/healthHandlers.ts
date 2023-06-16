@@ -17,7 +17,8 @@ interface DataObject {
   }
 export const updateHeartRate = async (req, res) => {
     try{
-        const elderlyNum = req.body.elderlyNum;
+    const elderlyNum = req.body.elderlyNum;
+    console.log("in updateHeartRate");
     let LastUpdateDateBand = await getLastUpdateDateBand(elderlyNum,"HR");
     let startDate;
     let endDateInDate = new Date();
@@ -77,7 +78,7 @@ export const updateHeartRate = async (req, res) => {
         //secret
         "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",
         //link to redirect to
-        "http://localhost:3000/heart_rate"
+        "https://elderyresearch.cs.bgu.ac.il/heart_rate"
     );
 
     const heartRateData: DataObject = {};
@@ -94,7 +95,7 @@ export const updateHeartRate = async (req, res) => {
                 aggregateBy: [
                     {
                         dataTypeName: "com.google.heart_rate.bpm",
-                        dataSourceId: "derived:com.google.heart_rate.bpm:com.google.android.gms:resting_heart_rate<-merge_heart_rate_bpm"
+                        // dataSourceId: "derived:com.google.heart_rate.bpm:com.google.android.gms:resting_heart_rate<-merge_heart_rate_bpm"
                     },
                 ],
 
@@ -108,9 +109,11 @@ export const updateHeartRate = async (req, res) => {
               for (const heartRate of points.point) {
                 const date = new Date(heartRate.startTimeNanos / 1000000).toISOString().slice(0, 10);
                 heartRateData[date] = heartRate.value;
+                console.log("heartRateData[date]",heartRateData[date]);
               }
           }
       }
+      console.log("heartRateData",heartRateData);
       await insertHR(elderlyNum, heartRateData);
       insertLastUpdateDateBand("HR", elderlyNum, new Date(endDate));
       console.log("heartRateData ",heartRateData);
@@ -188,7 +191,7 @@ export const updateSteps = async (req,res) => {
         //secret
         "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",
         //link to redirect to
-        "http://localhost:3000/steps"
+        "https://elderyresearch.cs.bgu.ac.il/steps"
         );
   
     const stepData: DataObject = {};
@@ -298,7 +301,7 @@ catch(e){
         //secret
         "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",
         //link to redirect to
-        "http://localhost:3000/active_minutes"
+        "https://elderyresearch.cs.bgu.ac.il/active_minutes"
         );
     const activeMinutesData: DataObject = {};
   
